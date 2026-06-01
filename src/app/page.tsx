@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import { CheckCircle, ShieldCheck, Zap, ArrowRight, MessageCircle, Copy, Check } from 'lucide-react';
 
 export default function LandingPage() {
-  const WHATSAPP_LINK = "https://wa.me/YOURNUMBER"; 
-  const SOLANA_WALLET = "ToughLion1622"; // User provided this as their Phantom ID/Address
+  const INSTAGRAM_LINK = "https://instagram.com/dsi_gnerai"; 
+  const SOLANA_WALLET = "ToughLion1622"; 
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = () => {
@@ -30,12 +30,12 @@ export default function LandingPage() {
               <a href="#features" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition">Features</a>
               <a href="#pricing" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition">Pricing</a>
               <a 
-                href={WHATSAPP_LINK}
+                href={INSTAGRAM_LINK}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-blue-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-blue-700 transition shadow-lg shadow-blue-200"
               >
-                Book Free Demo Call
+                DM Me on Instagram
               </a>
             </div>
           </div>
@@ -59,12 +59,12 @@ export default function LandingPage() {
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <a 
-                href={WHATSAPP_LINK}
+                href={INSTAGRAM_LINK}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-blue-600 text-white px-8 py-4 rounded-xl text-lg font-bold hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 flex items-center justify-center gap-2 group"
               >
-                Book Free Demo Call
+                DM Me on Instagram
                 <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition" />
               </a>
               <button className="bg-white text-slate-700 border-2 border-slate-200 px-8 py-4 rounded-xl text-lg font-bold hover:bg-slate-50 transition">
@@ -117,14 +117,18 @@ export default function LandingPage() {
             </ul>
 
             <a 
-              href={WHATSAPP_LINK}
+              href={INSTAGRAM_LINK}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl transition shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2"
             >
-              Book Free Demo Call
+              DM Me on Instagram
               <MessageCircle className="h-5 w-5" />
             </a>
+            
+            <p className="text-center text-slate-400 text-sm mt-6">
+              Questions? DM <a href={INSTAGRAM_LINK} className="text-blue-400 hover:underline">@dsi_gnerai</a> on Instagram
+            </p>
           </div>
 
           {/* Crypto Section */}
@@ -143,7 +147,7 @@ export default function LandingPage() {
             </div>
             <p className="text-sm text-slate-300 leading-relaxed">
               Send <span className="text-white font-bold">$397 USDC</span> on Solana.<br />
-              DM <a href="https://t.me/ToughLion1622" className="text-blue-400 hover:underline">@ToughLion1622</a> on Telegram with transaction hash.<br />
+              DM <a href={INSTAGRAM_LINK} className="text-blue-400 hover:underline">@dsi_gnerai</a> on Instagram with transaction hash.<br />
               <span className="text-blue-400 font-semibold italic mt-2 block">Your AI agent goes live in 24 hours.</span>
             </p>
           </div>
