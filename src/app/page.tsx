@@ -39,6 +39,10 @@ export default function LandingPage() {
         body: JSON.stringify({ messages: newMessages }),
       });
       const data = await response.json();
+      
+      // Artificial delay for "Sarah is typing..."
+      await new Promise(resolve => setTimeout(resolve, 1200));
+
       if (data.choices?.[0]?.message) {
         setMessages([...newMessages, data.choices[0].message]);
       }
