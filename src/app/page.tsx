@@ -5,7 +5,7 @@ import { CheckCircle, ShieldCheck, Zap, ArrowRight, MessageCircle, Copy, Check }
 
 export default function LandingPage() {
   const INSTAGRAM_LINK = "https://instagram.com/dsi_gnerai"; 
-  const SOLANA_WALLET = "ToughLion1622"; 
+  const SOLANA_WALLET = "9P6tP5XQeMuygKNAja1CoFaMfXjhWS1BSNxLu2tM5jKT"; 
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = () => {
@@ -134,9 +134,20 @@ export default function LandingPage() {
           {/* Crypto Section */}
           <div className="max-w-md mx-auto bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-8 border border-blue-500/30 shadow-2xl text-center">
             <h3 className="text-2xl font-bold text-white mb-2">Founding Client Special: $397 USDC</h3>
+            
+            <div className="mb-6 flex justify-center">
+              <div className="p-3 bg-white rounded-2xl shadow-lg shadow-blue-500/20">
+                <img 
+                  src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=solana:9P6tP5XQeMuygKNAja1CoFaMfXjhWS1BSNxLu2tM5jKT" 
+                  alt="Solana Wallet QR Code"
+                  className="w-40 h-40"
+                />
+              </div>
+            </div>
+
             <div className="bg-slate-950 rounded-xl p-4 mb-6 border border-slate-700 flex flex-col items-center gap-3">
-              <span className="text-xs text-slate-500 uppercase font-bold tracking-widest">Solana Wallet Address</span>
-              <code className="text-blue-400 font-mono break-all text-sm">{SOLANA_WALLET}</code>
+              <span className="text-xs text-slate-500 uppercase font-bold tracking-widest">Send $397 USDC on Solana network only</span>
+              <code className="text-blue-400 font-mono break-all text-xs leading-relaxed">{SOLANA_WALLET}</code>
               <button 
                 onClick={copyToClipboard}
                 className="flex items-center gap-2 text-xs font-bold text-slate-300 hover:text-white transition bg-slate-800 px-4 py-2 rounded-lg"
@@ -146,7 +157,6 @@ export default function LandingPage() {
               </button>
             </div>
             <p className="text-sm text-slate-300 leading-relaxed">
-              Send <span className="text-white font-bold">$397 USDC</span> on Solana.<br />
               DM <a href={INSTAGRAM_LINK} className="text-blue-400 hover:underline">@dsi_gnerai</a> on Instagram with transaction hash.<br />
               <span className="text-blue-400 font-semibold italic mt-2 block">Your AI agent goes live in 24 hours.</span>
             </p>
