@@ -1,28 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
-import { CheckCircle, ShieldCheck, Zap, ArrowRight, Loader2 } from 'lucide-react';
+import React from 'react';
+import { CheckCircle, ShieldCheck, Zap, ArrowRight, MessageCircle } from 'lucide-react';
 
 export default function LandingPage() {
-  const [loading, setLoading] = useState(false);
-
-  const handleCheckout = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch('/api/checkout', { method: 'POST' });
-      const data = await response.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        alert('Checkout failed. Please check your Stripe keys.');
-      }
-    } catch (err) {
-      console.error(err);
-      alert('Error connecting to Stripe.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const WHATSAPP_LINK = "https://wa.me/your_number_here"; // Owner can replace with their actual number
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
@@ -39,13 +21,14 @@ export default function LandingPage() {
             <div className="hidden md:flex items-center space-x-8">
               <a href="#features" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition">Features</a>
               <a href="#pricing" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition">Pricing</a>
-              <button 
-                onClick={handleCheckout}
-                disabled={loading}
-                className="bg-blue-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-blue-700 transition shadow-lg shadow-blue-200 disabled:opacity-50"
+              <a 
+                href={WHATSAPP_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-blue-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-blue-700 transition shadow-lg shadow-blue-200"
               >
-                {loading ? <Loader2 className="animate-spin h-4 w-4" /> : 'Get Started'}
-              </button>
+                Book Free Demo Call
+              </a>
             </div>
           </div>
         </div>
@@ -67,18 +50,15 @@ export default function LandingPage() {
               Stop losing patients to voicemail. Our Dental AI handles 24/7 booking, insurance verification, and FAQs so your staff can focus on the chair.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <button 
-                onClick={handleCheckout}
-                disabled={loading}
-                className="bg-blue-600 text-white px-8 py-4 rounded-xl text-lg font-bold hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 flex items-center justify-center gap-2 group disabled:opacity-50"
+              <a 
+                href={WHATSAPP_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-blue-600 text-white px-8 py-4 rounded-xl text-lg font-bold hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 flex items-center justify-center gap-2 group"
               >
-                {loading ? <Loader2 className="animate-spin h-5 w-5" /> : (
-                  <>
-                    Secure My AI Receptionist
-                    <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition" />
-                  </>
-                )}
-              </button>
+                Book Free Demo Call
+                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition" />
+              </a>
               <button className="bg-white text-slate-700 border-2 border-slate-200 px-8 py-4 rounded-xl text-lg font-bold hover:bg-slate-50 transition">
                 Watch Demo
               </button>
@@ -128,18 +108,25 @@ export default function LandingPage() {
               ))}
             </ul>
 
-            <button 
-              onClick={handleCheckout}
-              disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl transition shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2 disabled:opacity-50"
+            <a 
+              href={WHATSAPP_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl transition shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2"
             >
-              {loading ? <Loader2 className="animate-spin h-5 w-5" /> : (
-                <>
-                  Get Started Now
-                  <ArrowRight className="h-5 w-5" />
-                </>
-              )}
-            </button>
+              Book Free Demo Call
+              <MessageCircle className="h-5 w-5" />
+            </a>
+            
+            <div className="mt-8 pt-6 border-t border-slate-700 text-center">
+              <p className="text-blue-400 font-bold text-sm">
+                Founding Client Special: $397 USDC
+              </p>
+              <p className="text-slate-500 text-xs mt-1">
+                DM for wallet address.
+              </p>
+            </div>
+
             <p className="text-center text-slate-500 text-xs mt-4">
               Cancel anytime. 30-day money-back guarantee.
             </p>
