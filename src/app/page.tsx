@@ -1,12 +1,53 @@
 'use client';
 
-import React, { useState } from 'react';
-import { CheckCircle, ShieldCheck, Zap, ArrowRight, MessageCircle, Copy, Check } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { CheckCircle, ShieldCheck, Zap, ArrowRight, MessageCircle, Copy, Check, Send, User, Bot, Phone } from 'lucide-react';
 
 export default function LandingPage() {
   const INSTAGRAM_LINK = "https://instagram.com/desi_gnerai"; 
   const SOLANA_WALLET = "9P6tP5XQeMuygKNAja1CoFaMfXjhWS1BSNxLu2tM5jKT"; 
   const [copied, setCopied] = useState(false);
+
+  // Chat State
+  const [messages, setMessages] = useState<{ role: 'user' | 'assistant', content: string }[]>([]);
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
+
+    const userMessage = input.trim();
+    setInput('');
+    const newMessages = [...messages, { role: 'user' as const, content: userMessage }];
+    setMessages(newMessages);
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: newMessages }),
+      });
+      const data = await response.json();
+      if (data.choices?.[0]?.message) {
+        setMessages([...newMessages, data.choices[0].message]);
+      }
+    } catch (error) {
+      console.error('Failed to send message:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(SOLANA_WALLET);
@@ -75,6 +116,92 @@ export default function LandingPage() {
               <span className="font-bold">Trusted by 200+ Clinics</span>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* AI Demo Section */}
+      <section id="demo" className="py-24 bg-white">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-slate-900 mb-4">Test Sarah - AI Receptionist</h2>
+            <p className="text-slate-600">Experience how Sarah handles patients in real-time.</p>
+          </div>
+
+          <div className="bg-slate-100 rounded-[3rem] p-4 shadow-2xl border-[8px] border-slate-800 relative max-w-sm mx-auto overflow-hidden">
+            {/* Phone Header */}
+            <div className="bg-white px-6 pt-8 pb-4 border-b flex items-center gap-3">
+              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                <Bot className="text-blue-600 h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="font-bold text-slate-900 text-sm">Sarah (AI)</h3>
+                <div className="flex items-center gap-1">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                  <span className="text-[10px] text-slate-500 font-medium">Online Now</span>
+                </div>
+              </div>
+              <Phone className="ml-auto h-4 w-4 text-slate-400" />
+            </div>
+
+            {/* Chat Area */}
+            <div className="h-[400px] overflow-y-auto p-4 flex flex-col gap-3 bg-slate-50">
+              {messages.length === 0 && (
+                <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
+                  <div className="bg-white p-4 rounded-2xl shadow-sm mb-4">
+                    <p className="text-sm text-slate-500 leading-relaxed">
+                      "Hi! I'm Sarah. I can help you book an appointment or answer questions about our clinic."
+                    </p>
+                  </div>
+                  <p className="text-xs font-bold text-blue-600 animate-bounce">Type "I need a cleaning" to start</p>
+                </div>
+              )}
+              
+              {messages.map((msg, i) => (
+                <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-sm ${
+                    msg.role === 'user' 
+                      ? 'bg-blue-600 text-white rounded-tr-none' 
+                      : 'bg-white text-slate-800 shadow-sm border border-slate-100 rounded-tl-none'
+                  }`}>
+                    {msg.content}
+                  </div>
+                </div>
+              ))}
+              {isLoading && (
+                <div className="flex justify-start">
+                  <div className="bg-white px-4 py-2.5 rounded-2xl shadow-sm border border-slate-100 rounded-tl-none">
+                    <div className="flex gap-1">
+                      <div className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce" />
+                      <div className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce [animation-delay:0.2s]" />
+                      <div className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce [animation-delay:0.4s]" />
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div ref={chatEndRef} />
+            </div>
+
+            {/* Input Area */}
+            <form onSubmit={handleSendMessage} className="p-4 bg-white border-t flex gap-2">
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Type a message..."
+                className="flex-1 bg-slate-100 border-none rounded-full px-4 py-2 text-sm focus:ring-2 focus:ring-blue-600 outline-none"
+              />
+              <button 
+                type="submit"
+                disabled={isLoading || !input.trim()}
+                className="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 disabled:opacity-50 transition"
+              >
+                <Send className="h-4 w-4" />
+              </button>
+            </form>
+          </div>
+          <p className="text-center text-[10px] text-slate-400 mt-6 uppercase tracking-widest font-bold">
+            Live demo. Full phone version activates after setup.
+          </p>
         </div>
       </section>
 
