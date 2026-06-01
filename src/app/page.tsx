@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { CheckCircle, ShieldCheck, Zap, ArrowRight, MessageCircle, Copy, Check } from 'lucide-react';
 
 export default function LandingPage() {
-  const INSTAGRAM_LINK = "https://instagram.com/dsi_gnerai"; 
+  const INSTAGRAM_LINK = "https://instagram.com/desi_gnerai"; 
   const SOLANA_WALLET = "9P6tP5XQeMuygKNAja1CoFaMfXjhWS1BSNxLu2tM5jKT"; 
   const [copied, setCopied] = useState(false);
 
@@ -64,7 +64,7 @@ export default function LandingPage() {
                 rel="noopener noreferrer"
                 className="bg-blue-600 text-white px-8 py-4 rounded-xl text-lg font-bold hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 flex items-center justify-center gap-2 group"
               >
-                DM Me on Instagram
+                DM @desi_gnerai on Instagram
                 <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition" />
               </a>
               <button className="bg-white text-slate-700 border-2 border-slate-200 px-8 py-4 rounded-xl text-lg font-bold hover:bg-slate-50 transition">
@@ -122,12 +122,12 @@ export default function LandingPage() {
               rel="noopener noreferrer"
               className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl transition shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2"
             >
-              DM Me on Instagram
+              DM @desi_gnerai on Instagram
               <MessageCircle className="h-5 w-5" />
             </a>
             
             <p className="text-center text-slate-400 text-sm mt-6">
-              Questions? DM <a href={INSTAGRAM_LINK} className="text-blue-400 hover:underline">@dsi_gnerai</a> on Instagram
+              Questions? DM <a href={INSTAGRAM_LINK} className="text-blue-400 hover:underline">@desi_gnerai</a> on Instagram
             </p>
           </div>
 
@@ -157,7 +157,7 @@ export default function LandingPage() {
               </button>
             </div>
             <p className="text-sm text-slate-300 leading-relaxed">
-              DM <a href={INSTAGRAM_LINK} className="text-blue-400 hover:underline">@dsi_gnerai</a> on Instagram with transaction hash.<br />
+              DM <a href={INSTAGRAM_LINK} className="text-blue-400 hover:underline">@desi_gnerai</a> on Instagram with transaction hash.<br />
               <span className="text-blue-400 font-semibold italic mt-2 block">Your AI agent goes live in 24 hours.</span>
             </p>
           </div>
