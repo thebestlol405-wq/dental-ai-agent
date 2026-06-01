@@ -108,9 +108,12 @@ export default function LandingPage() {
                 DM @desi_gnerai on Instagram
                 <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition" />
               </a>
-              <button className="bg-white text-slate-700 border-2 border-slate-200 px-8 py-4 rounded-xl text-lg font-bold hover:bg-slate-50 transition">
-                Watch Demo
-              </button>
+              <a 
+                href="#sarah-chat"
+                className="bg-white text-slate-700 border-2 border-slate-200 px-8 py-4 rounded-xl text-lg font-bold hover:bg-slate-50 transition flex items-center justify-center"
+              >
+                Test Sarah Live ↓
+              </a>
             </div>
             <div className="mt-12 flex items-center justify-center gap-8 text-slate-400 grayscale opacity-70">
               <span className="font-bold">Trusted by 200+ Clinics</span>
@@ -120,7 +123,7 @@ export default function LandingPage() {
       </section>
 
       {/* AI Demo Section */}
-      <section id="demo" className="py-24 bg-white">
+      <section id="sarah-chat" className="py-24 bg-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-slate-900 mb-4">Test Sarah - AI Receptionist</h2>
