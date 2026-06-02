@@ -35,13 +35,15 @@ export async function POST(req: NextRequest) {
 
     console.log('Groq response status:', response.status);
     const data = await response.json();
-    console.log('Groq response data:', data);
+    console.log('Groq response data:', JSON.stringify(data, null, 2));
 
     if (!response.ok) {
       return NextResponse.json({ error: 'Groq API error', details: data }, { status: response.status });
     }
 
-    return NextResponse.json(data);
+    // Fix: Extract only the content string to match frontend expectation
+    const content = data.choices?.[0]?.message?.content || "";
+    return NextResponse.json({ message: content });
   } catch (error) {
     console.error('Chat API Error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

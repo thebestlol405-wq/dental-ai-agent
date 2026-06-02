@@ -51,8 +51,8 @@ export default function LandingPage() {
       // Artificial delay for "Sarah is typing..."
       await new Promise(resolve => setTimeout(resolve, 1200));
 
-      if (data.choices?.[0]?.message) {
-        setMessages([...newMessages, data.choices[0].message]);
+      if (data.message) {
+        setMessages([...newMessages, { role: 'assistant', content: data.message }]);
       }
     } catch (error) {
       console.error('Failed to send message:', error);
@@ -284,8 +284,14 @@ export default function LandingPage() {
       <section id="payment" className="py-24 bg-slate-900 text-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4 italic">Founding Client Special: $397 USDC</h2>
-            <p className="text-slate-400">Secure your lifetime founding rate via Solana.</p>
+            <h2 className="text-4xl font-extrabold text-white mb-4 tracking-tight">PSL Founding Clinic Special</h2>
+            <div className="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg text-2xl font-bold mb-4">
+              $500 Setup + $100/mo
+            </div>
+            <p className="text-slate-400 text-lg">
+              $600 due today covers setup + first month.<br />
+              Next bill day 60. Cancel anytime.
+            </p>
           </div>
           <div className="max-w-md mx-auto bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-8 border border-blue-500/30 shadow-2xl text-center">
             
@@ -300,7 +306,7 @@ export default function LandingPage() {
             </div>
 
             <div className="bg-slate-950 rounded-xl p-4 mb-6 border border-slate-700 flex flex-col items-center gap-3">
-              <span className="text-xs text-slate-500 uppercase font-bold tracking-widest">Send $397 USDC on Solana network only</span>
+              <span className="text-xs text-slate-500 uppercase font-bold tracking-widest">Send $600 USDC on Solana network only</span>
               <code className="text-blue-400 font-mono break-all text-xs leading-relaxed">{SOLANA_WALLET}</code>
               <button 
                 onClick={copyToClipboard}
