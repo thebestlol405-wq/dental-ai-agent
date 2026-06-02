@@ -35,15 +35,23 @@ export async function POST(req: NextRequest) {
 
     console.log('Groq response status:', response.status);
     const data = await response.json();
-    console.log('Groq response data:', JSON.stringify(data, null, 2));
+    console.log('GROQ RAW:', JSON.stringify(data));
 
-    if (!response.ok) {
-      return NextResponse.json({ error: 'Groq API error', details: data }, { status: response.status });
+    if (!response.ok || data.error) {
+      console.error('Groq Error Detected:', data.error);
+      return NextResponse.json({ 
+        message: `Sarah error: ${data.error?.message || 'Unknown Groq error'}` 
+      });
     }
 
-    // Fix: Extract only the content string to match frontend expectation
-    const content = data.choices?.[0]?.message?.content || "";
-    return NextResponse.json({ message: content });
+    const aiReply = data.choices?.[0]?.message?.content;
+    if (!aiReply) {
+      return NextResponse.json({ 
+        message: "Sarah is connecting. Please try again in 10s." 
+      });
+    }
+
+    return NextResponse.json({ message: aiReply });
   } catch (error) {
     console.error('Chat API Error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
