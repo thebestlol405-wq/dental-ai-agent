@@ -126,8 +126,61 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* NEW Pricing Section */}
+      <section id="pricing" className="py-24 bg-white relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">PSL Founding Clinic Special</h2>
+            <p className="text-slate-600 text-lg">Claim one of the 3 remaining founding spots in Port Saint Lucie.</p>
+          </div>
+
+          <div className="max-w-md mx-auto bg-white rounded-3xl p-8 border-2 border-blue-600 shadow-2xl relative overflow-hidden group">
+            <div className="absolute top-0 right-0 bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest py-1 px-10 translate-x-10 translate-y-4 rotate-45">
+              Limited
+            </div>
+            
+            <div className="mb-8">
+              <div className="flex items-baseline gap-1">
+                <span className="text-5xl font-black text-slate-900">$500</span>
+                <span className="text-slate-500 font-medium">Setup</span>
+              </div>
+              <div className="flex items-baseline gap-1 mt-2">
+                <span className="text-3xl font-bold text-blue-600">+$100</span>
+                <span className="text-blue-600/70 font-medium">/mo</span>
+              </div>
+            </div>
+
+            <ul className="space-y-4 mb-10">
+              {[
+                '24/7 AI receptionist Sarah',
+                'Books directly to your calendar',
+                'After-hours phone + text coverage',
+                'Custom branded to your clinic',
+                'Cancel anytime'
+              ].map((feature) => (
+                <li key={feature} className="flex items-center gap-3">
+                  <CheckCircle className="h-5 w-5 text-blue-600 shrink-0" />
+                  <span className="text-slate-700 font-medium">{feature}</span>
+                </li>
+              ))}
+            </ul>
+
+            <a 
+              href="#sarah-chat"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition shadow-lg shadow-blue-200 flex items-center justify-center gap-2 text-lg"
+            >
+              Claim Your Spot ↓
+            </a>
+            
+            <p className="text-center text-red-600 text-xs mt-6 font-bold uppercase tracking-tighter animate-pulse">
+              Only 3 spots available. Price goes to $1,997 after.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* AI Demo Section */}
-      <section id="sarah-chat" className="py-24 bg-white">
+      <section id="sarah-chat" className="py-24 bg-slate-50">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-slate-900 mb-4">Test Sarah - AI Receptionist</h2>
@@ -212,62 +265,14 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section id="pricing" className="py-24 bg-slate-900 text-white relative">
+      {/* Crypto Payment Section */}
+      <section id="payment" className="py-24 bg-slate-900 text-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">Transparent Enterprise Pricing</h2>
-            <p className="text-slate-400">Scale your practice with a tireless digital team member.</p>
+            <h2 className="text-3xl font-bold mb-4 italic">Founding Client Special: $397 USDC</h2>
+            <p className="text-slate-400">Secure your lifetime founding rate via Solana.</p>
           </div>
-
-          <div className="max-w-md mx-auto bg-slate-800 rounded-3xl p-8 border border-slate-700 shadow-2xl relative overflow-hidden group mb-12">
-            <div className="absolute top-0 right-0 bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest py-1 px-10 translate-x-10 translate-y-4 rotate-45">
-              Popular
-            </div>
-            
-            <div className="mb-8">
-              <h3 className="text-xl font-bold mb-2">Practice Growth Plan</h3>
-              <div className="flex items-baseline gap-1">
-                <span className="text-4xl font-extrabold">$297</span>
-                <span className="text-slate-400">/month</span>
-              </div>
-              <p className="text-sm text-blue-400 font-medium mt-2">+ $497 One-time Setup Fee</p>
-            </div>
-
-            <ul className="space-y-4 mb-10">
-              {[
-                '24/7 AI Phone Receptionist',
-                'Seamless PMS Integration',
-                'Insurance Verification AI',
-                'Review Generation Bot',
-                'Advanced Appointment Dashboard',
-                'HIPAA Compliant Security'
-              ].map((feature) => (
-                <li key={feature} className="flex items-center gap-3">
-                  <CheckCircle className="h-5 w-5 text-blue-500 shrink-0" />
-                  <span className="text-slate-300">{feature}</span>
-                </li>
-              ))}
-            </ul>
-
-            <a 
-              href={INSTAGRAM_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl transition shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2"
-            >
-              DM @desi_gnerai on Instagram
-              <MessageCircle className="h-5 w-5" />
-            </a>
-            
-            <p className="text-center text-slate-400 text-sm mt-6">
-              Questions? DM <a href={INSTAGRAM_LINK} className="text-blue-400 hover:underline">@desi_gnerai</a> on Instagram
-            </p>
-          </div>
-
-          {/* Crypto Section */}
           <div className="max-w-md mx-auto bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-8 border border-blue-500/30 shadow-2xl text-center">
-            <h3 className="text-2xl font-bold text-white mb-2">Founding Client Special: $397 USDC</h3>
             
             <div className="mb-6 flex justify-center">
               <div className="p-3 bg-white rounded-2xl shadow-lg shadow-blue-500/20">
