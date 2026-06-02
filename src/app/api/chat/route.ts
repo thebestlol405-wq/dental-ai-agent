@@ -2,8 +2,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
+  console.log('POST /api/chat hit');
   try {
-    const { messages } = await req.json();
+    const body = await req.json();
+    console.log('Request body:', body);
+    const { messages } = body;
     const apiKey = process.env.GROQ_API_KEY;
 
     if (!apiKey) {
@@ -30,7 +33,14 @@ export async function POST(req: NextRequest) {
       }),
     });
 
+    console.log('Groq response status:', response.status);
     const data = await response.json();
+    console.log('Groq response data:', data);
+
+    if (!response.ok) {
+      return NextResponse.json({ error: 'Groq API error', details: data }, { status: response.status });
+    }
+
     return NextResponse.json(data);
   } catch (error) {
     console.error('Chat API Error:', error);

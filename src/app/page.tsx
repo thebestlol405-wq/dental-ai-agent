@@ -24,7 +24,11 @@ export default function LandingPage() {
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isLoading) return;
+    console.log('handleSendMessage triggered', { input, isLoading });
+    if (!input.trim() || isLoading) {
+      console.log('Returning early', { input: !!input.trim(), isLoading });
+      return;
+    }
 
     const userMessage = input.trim();
     setInput('');
@@ -32,13 +36,17 @@ export default function LandingPage() {
     setMessages(newMessages);
     setIsLoading(true);
 
+    console.log('Fetching /api/chat...', newMessages);
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: newMessages }),
       });
+      
+      console.log('Response status:', response.status);
       const data = await response.json();
+      console.log('Response data:', data);
       
       // Artificial delay for "Sarah is typing..."
       await new Promise(resolve => setTimeout(resolve, 1200));
@@ -242,22 +250,29 @@ export default function LandingPage() {
             </div>
 
             {/* Input Area */}
-            <form onSubmit={handleSendMessage} className="p-4 bg-white border-t flex gap-2">
+            <div className="p-4 bg-white border-t flex gap-2">
               <input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage(e as any);
+                  }
+                }}
                 placeholder="Type a message..."
                 className="flex-1 bg-slate-100 border-none rounded-full px-4 py-2 text-sm focus:ring-2 focus:ring-blue-600 outline-none"
               />
               <button 
-                type="submit"
+                type="button"
+                onClick={(e) => handleSendMessage(e as any)}
                 disabled={isLoading || !input.trim()}
                 className="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 disabled:opacity-50 transition"
               >
                 <Send className="h-4 w-4" />
               </button>
-            </form>
+            </div>
           </div>
           <p className="text-center text-[10px] text-slate-400 mt-6 uppercase tracking-widest font-bold">
             Live demo. Full phone version activates after setup.
