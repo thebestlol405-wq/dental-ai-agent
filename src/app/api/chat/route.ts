@@ -1,3 +1,4 @@
+// v2 - forcing redeploy to ensure system prompt is applied
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
