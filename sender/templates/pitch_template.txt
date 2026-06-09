@@ -1,0 +1,11 @@
+Hi {{business_name}},
+
+I came across {{business_name}} in {{location}} and was impressed by what you're doing in the {{industry}} space.
+
+We specialize in helping {{industry}} businesses like yours reach more local clients through streamlined digital outreach. I'd love to share a few ideas that could help you grow — no cost, no obligation.
+
+Would you be open to a 10-minute chat this week?
+
+Best regards,
+{{from_name}}
+{{from_email}}
