@@ -48,3 +48,39 @@ def test_send_one_failure(mock_smtp, sender):
     success = sender._send_one("target@test.com", "Body", "Subject")
     
     assert success is False
+
+def test_daily_limit_logic(sender):
+    # Mock daily sent count to be 29
+    with patch("database.database.LeadDatabase") as mock_db_class:
+        mock_db = mock_db_class.return_value
+        mock_db.get_daily_sent_count.return_value = 29
+        
+        from sender.sender import send_pending_leads
+        
+        # Mock EmailSender to not actually connect/send
+        with patch("sender.sender.EmailSender") as mock_sender_class:
+            mock_sender_class.DAILY_LIMIT = 30
+            mock_sender_instance = mock_sender_class.return_value.__enter__.return_value
+            mock_sender_instance.send_leads.return_value = {"sent": 1, "failed": 0, "skipped_daily_limit": 0}
+            
+            # 1 lead available
+            mock_db.get_leads_by_status.return_value = [{"id": 1, "email": "test@test.com"}]
+            
+            result = send_pending_leads(mock_db, limit=10)
+            
+            assert result["sent"] == 1
+            # send_leads should have been called with daily_limit=1 (30-29)
+            mock_sender_instance.send_leads.assert_called_once()
+            args, kwargs = mock_sender_instance.send_leads.call_args
+            assert kwargs["daily_limit"] == 1
+
+def test_daily_limit_reached(sender):
+    with patch("database.database.LeadDatabase") as mock_db_class:
+        mock_db = mock_db_class.return_value
+        mock_db.get_daily_sent_count.return_value = 30 # Limit reached
+        
+        from sender.sender import send_pending_leads
+        
+        result = send_pending_leads(mock_db, limit=10)
+        assert result["sent"] == 0
+        assert result["skipped_daily_limit"] == 0 # Function returns early
