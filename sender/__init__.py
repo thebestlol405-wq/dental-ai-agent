@@ -1,2 +1,2 @@
 """Double Agent — Sender module for automated email outreach."""
-from .sender import EmailSender
+from .sender import EmailSender, send_pending_leads
