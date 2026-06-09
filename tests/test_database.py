@@ -84,8 +84,8 @@ def test_search_leads(temp_db):
     assert results[0]["business_name"] == "Biz 1"
 
 def test_daily_sent_count(temp_db):
-    from datetime import datetime
-    now = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+    from datetime import datetime, timezone
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
     
     # Add a lead sent today
     cursor = temp_db._conn.cursor()

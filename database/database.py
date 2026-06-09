@@ -8,7 +8,7 @@ States: Scraped → Queued → Sent
 import sqlite3
 import os
 from enum import Enum
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 
@@ -119,7 +119,7 @@ class LeadDatabase:
 
     def get_daily_sent_count(self) -> int:
         """Number of emails sent today (UTC) — used to enforce the 30/day cap."""
-        today = datetime.utcnow().strftime("%Y-%m-%d")
+        today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         cursor = self._conn.cursor()
         cursor.execute("""
             SELECT COUNT(*) FROM leads
@@ -148,7 +148,7 @@ class LeadDatabase:
     def update_status(self, lead_id: int, new_status: str) -> bool:
         """Transition a lead to a new status. Returns True if updated."""
         cursor = self._conn.cursor()
-        now = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+        now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
         if new_status == LeadStatus.SENT:
             cursor.execute("""
                 UPDATE leads SET status = ?, sent_at = ?, updated_at = ?

@@ -15,7 +15,7 @@ import smtplib
 import logging
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 from dotenv import load_dotenv
@@ -122,7 +122,7 @@ class EmailSender:
         msg["From"] = f"{self.from_name} <{self.from_email}>"
         msg["To"] = to_email
         msg["Subject"] = subject
-        msg["Message-ID"] = f"<{datetime.utcnow().timestamp()}.{hash(to_email)}@doubleagent>"
+        msg["Message-ID"] = f"<{datetime.now(timezone.utc).timestamp()}.{hash(to_email)}@doubleagent>"
 
         # Plain text part
         msg.attach(MIMEText(body, "plain", "utf-8"))
