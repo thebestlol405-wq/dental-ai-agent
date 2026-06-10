@@ -3,7 +3,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(req: NextRequest) {
   try {
-    const { leadId, name, company, email } = await req.json();
+    const { name, company, email } = await req.json();
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
@@ -24,6 +24,7 @@ Rules:
 2. Human-like tone, not corporate.
 3. Subject line should be catchy but professional.
 4. Mention that we are looking for a "Founding Agency" to receive a special rate ($500 setup + $100/mo).
+5. Output the result in JSON format with two fields: "subject" and "body".
 
 Lead Info:
 Name: ${name}
@@ -31,22 +32,35 @@ Company: ${company}
 Email: ${email}`;
 
     const result = await model.generateContent(prompt);
-    const emailContent = result.response.text();
+    const text = result.response.text();
 
-    if (!emailContent) {
+    // Attempt to parse JSON from the response (sometimes AI wraps it in markdown)
+    let emailData;
+    try {
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      emailData = JSON.parse(jsonMatch ? jsonMatch[0] : text);
+    } catch {
+      console.error('Failed to parse AI response as JSON:', text);
+      emailData = {
+        subject: "Quick question about your agency",
+        body: text
+      };
+    }
+
+    if (!emailData.body) {
       return NextResponse.json({ error: 'Failed to generate email content' }, { status: 500 });
     }
 
-    console.log('--- MOCK EMAIL SEND ---');
+    console.log('--- MOCK EMAIL GENERATED ---');
     console.log(`To: ${email}`);
-    console.log(`Lead ID: ${leadId}`);
-    console.log('Content:', emailContent);
+    console.log(`Subject: ${emailData.subject}`);
     console.log('-----------------------');
 
     return NextResponse.json({
       success: true,
-      message: 'Email generated and queued for sending (MOCK)',
-      content: emailContent
+      message: 'Email generated',
+      subject: emailData.subject,
+      content: emailData.body
     });
   } catch (error) {
     console.error('Outreach API Error:', error);

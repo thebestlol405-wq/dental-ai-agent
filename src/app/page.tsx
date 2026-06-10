@@ -24,7 +24,7 @@ interface Lead {
 export default function Dashboard() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [isSending, setIsSending] = useState<string | null>(null);
-  const [lastSentContent, setLastSentContent] = useState<string | null>(null);
+  const [lastSentContent, setLastSentContent] = useState<{ subject: string, body: string, email: string } | null>(null);
   const [activeTab, setActiveTab] = useState<'scraper' | 'assistant' | 'leads'>('scraper');
   const [searchQuery, setSearchQuery] = useState('');
   const [isScraping, setIsScraping] = useState(false);
@@ -134,7 +134,11 @@ export default function Dashboard() {
       const data = await response.json();
 
       if (data.success) {
-        setLastSentContent(data.content);
+        setLastSentContent({
+          subject: data.subject,
+          body: data.content,
+          email: lead.email
+        });
         await fetch('/api/leads', {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
@@ -332,10 +336,27 @@ export default function Dashboard() {
               </div>
 
               <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-4 md:p-6 shrink-0">
-                <h3 className="font-bold text-sm md:text-base mb-3 md:mb-4">Last Sent Outreach</h3>
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="font-bold text-sm md:text-base">Generated Outreach</h3>
+                  {lastSentContent && (
+                    <a
+                      href={`mailto:${lastSentContent.email}?subject=${encodeURIComponent(lastSentContent.subject)}&body=${encodeURIComponent(lastSentContent.body)}`}
+                      className="bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 hover:bg-blue-700 transition"
+                    >
+                      <Mail className="h-3 w-3" />
+                      Open in Email Client
+                    </a>
+                  )}
+                </div>
                 {lastSentContent ? (
-                  <div className="bg-slate-50 p-4 rounded-xl text-sm whitespace-pre-wrap text-slate-700 border">
-                    {lastSentContent}
+                  <div className="bg-slate-50 p-4 rounded-xl text-sm border">
+                    <div className="mb-2 pb-2 border-b border-slate-200">
+                      <span className="font-bold text-slate-500 uppercase text-[10px]">Subject:</span>
+                      <div className="text-slate-900 font-medium">{lastSentContent.subject}</div>
+                    </div>
+                    <div className="whitespace-pre-wrap text-slate-700">
+                      {lastSentContent.body}
+                    </div>
                   </div>
                 ) : (
                   <p className="text-slate-400 text-sm italic">Send an email to preview content here.</p>
