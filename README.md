@@ -16,7 +16,31 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## How to Use DoubleAgent
+
+DoubleAgent is now a specialized tool for Real Estate outreach.
+
+### 1. Scraper
+- Navigate to the **Scraper** tab.
+- Enter a city or region (e.g., "Miami, FL" or "Toronto, ON").
+- Click **Scrape** to find real estate agencies and add them to your leads.
+
+### 2. Assistant
+- Navigate to the **Assistant** tab.
+- Ask the AI to help you write an email, follow up, or refine your pitch.
+- Example: "Write a short follow-up email for an agency that hasn't replied to my first demo offer."
+
+### 3. Leads & Outreach
+- Navigate to the **Leads** tab to see your collected agencies.
+- Click the **Send** icon next to a lead to generate and "send" (mocked) a personalized outreach email.
+- Preview the generated content in the right-hand panel.
+
+## Environment Variables
+
+Make sure you have a `.env.local` file with your Groq API key:
+```
+GROQ_API_KEY=your_api_key_here
+```
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
