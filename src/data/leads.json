@@ -68,5 +68,47 @@
     "company": "RE/MAX Masterpiece Realty",
     "email": "nberlin@remaxmasterpiecerealty.com",
     "status": "new"
+  },
+  {
+    "id": "11",
+    "name": "Sal Saleski",
+    "company": "Berkshire Hathaway CNY Realty",
+    "email": "ssaleski@twcny.rr.com",
+    "status": "new"
+  },
+  {
+    "id": "12",
+    "name": "Noelle Salmonsen",
+    "company": "Freedom Real Estate",
+    "email": "noellesoldit@earthlink.net",
+    "status": "new"
+  },
+  {
+    "id": "13",
+    "name": "Mandy Saloski",
+    "company": "Inquire Realty",
+    "email": "msaloski@gmail.com",
+    "status": "new"
+  },
+  {
+    "id": "14",
+    "name": "Tanmay Kelkar",
+    "company": "Tanmay Kelkar Real Estate",
+    "email": "tanmayrealtor@gmail.com",
+    "status": "new"
+  },
+  {
+    "id": "15",
+    "name": "Krishna Bhure",
+    "company": "Real Estate Broker",
+    "email": "Connect@kbreg.com",
+    "status": "new"
+  },
+  {
+    "id": "16",
+    "name": "Omkar Mhatre",
+    "company": "Omkar Mhatre Realtor",
+    "email": "omkarealty@gmail.com",
+    "status": "new"
   }
 ]

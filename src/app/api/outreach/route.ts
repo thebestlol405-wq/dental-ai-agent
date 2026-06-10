@@ -9,18 +9,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Groq API Key not found' }, { status: 500 });
     }
 
-    const systemPrompt = `You are a business development representative for DentalAI.
-We have built an AI receptionist named "Sarah" that helps dental clinics book 30% more patients and handle 24/7 bookings.
-We are now expanding our technology to Real Estate agencies to help them handle leads, book showings, and answer client questions 24/7.
+    const systemPrompt = `You are a business development representative for an automation agency.
+We build AI solutions for real estate agencies to help them handle leads and client questions 24/7.
 
 Write a short, professional, and highly personalized outreach email to a real estate professional.
-Goal: Offer a 10-minute demo of how our "Double Agent" AI can help their agency never miss a lead again.
+Goal: Offer a 10-minute demo of how our AI can help their agency never miss a lead again.
 
 Rules:
 1. Short and punchy (under 100 words).
 2. Human-like tone, not corporate.
 3. Subject line should be catchy but professional.
-4. Mention that we are looking for a "Founding Agency" in Port Saint Lucie to receive a special rate ($500 setup + $100/mo).
+4. Mention that we are looking for a "Founding Agency" to receive a special rate ($500 setup + $100/mo).
 
 Lead Info:
 Name: ${name}
@@ -51,15 +50,11 @@ Email: ${email}`;
       return NextResponse.json({ error: 'Failed to generate email content' }, { status: 500 });
     }
 
-    // MOCK SENDING - Log to console and "pretend" to send
     console.log('--- MOCK EMAIL SEND ---');
     console.log(`To: ${email}`);
     console.log(`Lead ID: ${leadId}`);
     console.log('Content:', emailContent);
     console.log('-----------------------');
-
-    // In a real scenario, you would use an email provider here:
-    // const resendResponse = await fetch('https://api.resend.com/emails', { ... });
 
     return NextResponse.json({
       success: true,

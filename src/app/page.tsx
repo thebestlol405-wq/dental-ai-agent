@@ -1,329 +1,345 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { CheckCircle, ShieldCheck, Zap, ArrowRight, MessageCircle, Copy, Check, Send, User, Bot, Phone } from 'lucide-react';
+import {
+  ShieldCheck,
+  Zap,
+  Send,
+  Bot,
+  Search,
+  Users,
+  Mail,
+  Building2,
+  Loader2,
+} from 'lucide-react';
 
-export default function LandingPage() {
-  const INSTAGRAM_LINK = "https://instagram.com/desi_gnerai"; 
-  // Chat State
+interface Lead {
+  id: string;
+  name: string;
+  company: string;
+  email: string;
+  status: 'new' | 'contacted' | 'interested' | 'rejected';
+}
+
+export default function Dashboard() {
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [isSending, setIsSending] = useState<string | null>(null);
+  const [lastSentContent, setLastSentContent] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'scraper' | 'assistant' | 'leads'>('scraper');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isScraping, setIsScraping] = useState(false);
+
+  // Assistant State
   const [messages, setMessages] = useState<{ role: 'user' | 'assistant', content: string }[]>([]);
-  const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [assistantInput, setAssistantInput] = useState('');
+  const [isAssistantLoading, setIsAssistantLoading] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  useEffect(() => {
+    const fetchLeads = async () => {
+      try {
+        const response = await fetch('/api/leads');
+        const data = await response.json();
+        setLeads(data);
+      } catch (error) {
+        console.error('Failed to fetch leads:', error);
+      }
+    };
+    fetchLeads();
+  }, []);
 
   useEffect(() => {
-    scrollToBottom();
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  const refreshLeads = async () => {
+    try {
+      const response = await fetch('/api/leads');
+      const data = await response.json();
+      setLeads(data);
+    } catch (error) {
+      console.error('Failed to fetch leads:', error);
+    }
+  };
+
+  const handleScrape = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+
+    setIsScraping(true);
+    try {
+      const response = await fetch('/api/scrape', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: searchQuery }),
+      });
+      const data = await response.json();
+      if (data.leads) {
+        await refreshLeads();
+        setActiveTab('leads');
+      }
+    } catch (error) {
+      console.error('Scraping failed:', error);
+    } finally {
+      setIsScraping(false);
+    }
+  };
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('handleSendMessage triggered', { input, isLoading });
-    if (!input.trim() || isLoading) {
-      console.log('Returning early', { input: !!input.trim(), isLoading });
-      return;
-    }
+    if (!assistantInput.trim() || isAssistantLoading) return;
 
-    const userMessage = input.trim();
-    setInput('');
+    const userMessage = assistantInput.trim();
+    setAssistantInput('');
     const newMessages = [...messages, { role: 'user' as const, content: userMessage }];
     setMessages(newMessages);
-    setIsLoading(true);
+    setIsAssistantLoading(true);
 
-    console.log('Fetching /api/chat...', newMessages);
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: newMessages }),
       });
-      
-      console.log('Response status:', response.status);
       const data = await response.json();
-      console.log('Response data:', data);
-      
-      // Artificial delay for "Sarah is typing..."
-      await new Promise(resolve => setTimeout(resolve, 1200));
-
       if (data.message) {
         setMessages([...newMessages, { role: 'assistant', content: data.message }]);
       }
     } catch (error) {
-      console.error('Failed to send message:', error);
+      console.error('Assistant error:', error);
     } finally {
-      setIsLoading(false);
+      setIsAssistantLoading(false);
+    }
+  };
+
+  const handleSendEmail = async (lead: Lead) => {
+    setIsSending(lead.id);
+    setLastSentContent(null);
+    try {
+      const response = await fetch('/api/outreach', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          leadId: lead.id,
+          name: lead.name,
+          company: lead.company,
+          email: lead.email
+        }),
+      });
+      const data = await response.json();
+
+      if (data.success) {
+        setLastSentContent(data.content);
+        await fetch('/api/leads', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: lead.id, status: 'contacted' }),
+        });
+        await refreshLeads();
+      }
+    } catch (error) {
+      console.error('Failed to send outreach:', error);
+    } finally {
+      setIsSending(null);
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
-      {/* Navigation */}
-      <nav className="border-b bg-white/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
-            <div className="flex items-center gap-2">
-              <div className="bg-blue-600 p-2 rounded-lg">
-                <ShieldCheck className="text-white h-6 w-6" />
-              </div>
-              <span className="text-xl font-bold tracking-tight">DentalAI</span>
-            </div>
-            <div className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition">Features</a>
-              <a href="#pricing" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition">Pricing</a>
-              <a 
-                href={INSTAGRAM_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-blue-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-blue-700 transition shadow-lg shadow-blue-200"
-              >
-                DM Me on Instagram
-              </a>
-            </div>
+    <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row">
+      {/* Sidebar */}
+      <aside className="w-full md:w-64 bg-slate-900 text-white p-6 flex flex-col gap-8">
+        <div className="flex items-center gap-3">
+          <div className="bg-blue-600 p-2 rounded-lg">
+            <ShieldCheck className="text-white h-6 w-6" />
           </div>
+          <span className="text-xl font-bold tracking-tight">DoubleAgent</span>
         </div>
-      </nav>
 
-      {/* Hero Section */}
-      <section className="relative pt-20 pb-32 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center">
-            <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium mb-6 border border-blue-100">
-              <Zap className="h-4 w-4" />
-              <span>Next-Gen Dental Practice Automation</span>
-            </div>
-            <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 mb-6 tracking-tight">
-              AI Receptionist That <br />
-              <span className="text-blue-600 italic">Books 30% More Patients</span>
+        <nav className="flex flex-col gap-2">
+          <button
+            onClick={() => setActiveTab('scraper')}
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition font-medium ${activeTab === 'scraper' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:bg-slate-800'}`}
+          >
+            <Search className="h-5 w-5" />
+            Scraper
+          </button>
+          <button
+            onClick={() => setActiveTab('assistant')}
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition font-medium ${activeTab === 'assistant' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:bg-slate-800'}`}
+          >
+            <Bot className="h-5 w-5" />
+            Assistant
+          </button>
+          <button
+            onClick={() => setActiveTab('leads')}
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition font-medium ${activeTab === 'leads' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:bg-slate-800'}`}
+          >
+            <Users className="h-5 w-5" />
+            Leads
+          </button>
+        </nav>
+
+        <div className="mt-auto bg-slate-800 p-4 rounded-2xl hidden md:block">
+          <p className="text-xs text-slate-400 uppercase font-bold mb-2">Credits</p>
+          <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+            <div className="h-full bg-blue-500 w-3/4" />
+          </div>
+          <p className="text-xs mt-2 font-medium">750 / 1000 searches</p>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 overflow-y-auto">
+        <header className="bg-white border-b px-8 py-6 flex justify-between items-center sticky top-0 z-10">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900">
+              {activeTab === 'scraper' ? 'Agency Scraper' : activeTab === 'assistant' ? 'Email Assistant' : 'Real Estate Leads'}
             </h1>
-            <p className="text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-              Stop losing patients to voicemail. Our Dental AI handles 24/7 booking, insurance verification, and FAQs so your staff can focus on the chair.
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <a 
-                href={INSTAGRAM_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-blue-600 text-white px-8 py-4 rounded-xl text-lg font-bold hover:bg-blue-700 transition-all shadow-xl shadow-blue-200 flex items-center justify-center gap-2 group"
-              >
-                DM @desi_gnerai on Instagram
-                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition" />
-              </a>
-              <a 
-                href="#sarah-chat"
-                className="bg-white text-slate-700 border-2 border-slate-200 px-8 py-4 rounded-xl text-lg font-bold hover:bg-slate-50 transition flex items-center justify-center"
-              >
-                Test Sarah Live ↓
-              </a>
-            </div>
-            <div className="mt-12 flex items-center justify-center gap-8 text-slate-400 grayscale opacity-70">
-              <span className="font-bold">Trusted by 200+ Clinics</span>
-            </div>
+            <p className="text-slate-500 text-sm">Targeting: USA & Canada</p>
           </div>
-        </div>
-      </section>
+        </header>
 
-      {/* NEW Pricing Section */}
-      <section id="pricing" className="py-24 bg-white relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">PSL Founding Clinic Special</h2>
-            <p className="text-slate-600 text-lg">Claim one of the 3 remaining founding spots in Port Saint Lucie.</p>
-          </div>
+        <div className="p-8">
+          {activeTab === 'scraper' && (
+            <div className="max-w-2xl mx-auto py-12 text-center">
+              <Zap className="h-12 w-12 text-blue-600 mx-auto mb-6" />
+              <h2 className="text-3xl font-extrabold text-slate-900 mb-4">Find Real Estate Agencies</h2>
+              <p className="text-slate-600 mb-8">Enter a city or region to scrape agency data and contact emails.</p>
 
-          <div className="max-w-md mx-auto bg-white rounded-3xl p-8 border-2 border-blue-600 shadow-2xl relative overflow-hidden group">
-            <div className="absolute top-0 right-0 bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest py-1 px-10 translate-x-10 translate-y-4 rotate-45">
-              Limited
+              <form onSubmit={handleScrape} className="flex gap-2">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="e.g. Miami, FL or Toronto, ON"
+                  className="flex-1 px-6 py-4 rounded-2xl border-2 border-slate-200 focus:border-blue-600 outline-none transition"
+                />
+                <button
+                  disabled={isScraping || !searchQuery.trim()}
+                  className="bg-blue-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-blue-700 disabled:opacity-50 transition shadow-xl shadow-blue-200 flex items-center gap-2"
+                >
+                  {isScraping ? <Loader2 className="h-5 w-5 animate-spin" /> : <Search className="h-5 w-5" />}
+                  Scrape
+                </button>
+              </form>
             </div>
-            
-            <div className="mb-8">
-              <div className="flex items-baseline gap-1">
-                <span className="text-5xl font-black text-slate-900">$500</span>
-                <span className="text-slate-500 font-medium">Setup</span>
-              </div>
-              <div className="flex items-baseline gap-1 mt-2">
-                <span className="text-3xl font-bold text-blue-600">+$100</span>
-                <span className="text-blue-600/70 font-medium">/mo</span>
-              </div>
-            </div>
+          )}
 
-            <ul className="space-y-4 mb-10">
-              {[
-                '24/7 AI receptionist Sarah',
-                'Books directly to your calendar',
-                'After-hours phone + text coverage',
-                'Custom branded to your clinic',
-                'Cancel anytime'
-              ].map((feature) => (
-                <li key={feature} className="flex items-center gap-3">
-                  <CheckCircle className="h-5 w-5 text-blue-600 shrink-0" />
-                  <span className="text-slate-700 font-medium">{feature}</span>
-                </li>
-              ))}
-            </ul>
-
-            <a 
-              href="#sarah-chat"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition shadow-lg shadow-blue-200 flex items-center justify-center gap-2 text-lg"
-            >
-              Claim Your Spot ↓
-            </a>
-            
-            <p className="text-center text-red-600 text-xs mt-6 font-bold uppercase tracking-tighter animate-pulse">
-              Only 3 spots available. Price goes to $1,997 after.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* AI Demo Section */}
-      <section id="sarah-chat" className="py-24 bg-slate-50">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-slate-900 mb-4">Test Sarah - AI Receptionist</h2>
-            <p className="text-slate-600">Experience how Sarah handles patients in real-time.</p>
-          </div>
-
-          <div className="bg-slate-100 rounded-[3rem] p-4 shadow-2xl border-[8px] border-slate-800 relative max-w-sm mx-auto overflow-hidden">
-            {/* Phone Header */}
-            <div className="bg-white px-6 pt-8 pb-4 border-b flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                <Bot className="text-blue-600 h-6 w-6" />
-              </div>
-              <div>
-                <h3 className="font-bold text-slate-900 text-sm">Sarah (AI)</h3>
-                <div className="flex items-center gap-1">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                  <span className="text-[10px] text-slate-500 font-medium">Online Now</span>
+          {activeTab === 'assistant' && (
+            <div className="max-w-3xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col h-[600px] border border-slate-200">
+              <div className="p-6 border-b flex items-center gap-4">
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                  <Bot className="text-blue-600 h-8 w-8" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-900">Personal Outreach Assistant</h3>
+                  <p className="text-xs text-slate-500">Helping you write professional emails</p>
                 </div>
               </div>
-              <Phone className="ml-auto h-4 w-4 text-slate-400" />
-            </div>
 
-            {/* Chat Area */}
-            <div className="h-[400px] overflow-y-auto p-4 flex flex-col gap-3 bg-slate-50">
-              {messages.length === 0 && (
-                <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
-                  <div className="bg-white p-4 rounded-2xl shadow-sm mb-4">
-                    <p className="text-sm text-slate-500 leading-relaxed">
-                      &quot;Hi! I&apos;m Sarah. I can help you book an appointment or answer questions about our clinic.&quot;
-                    </p>
+              <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4 bg-slate-50">
+                {messages.length === 0 && (
+                  <div className="text-center py-12 text-slate-400">
+                    <Mail className="h-12 w-12 mx-auto mb-4 opacity-20" />
+                    <p>Ask me to draft an email for a specific lead or purpose.</p>
                   </div>
-                  <p className="text-xs font-bold text-blue-600 animate-bounce">Type &quot;I need a cleaning&quot; to start</p>
-                </div>
-              )}
-              
-              {messages.map((msg, i) => (
-                <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-sm ${
-                    msg.role === 'user' 
-                      ? 'bg-blue-600 text-white rounded-tr-none' 
-                      : 'bg-white text-slate-800 shadow-sm border border-slate-100 rounded-tl-none'
-                  }`}>
-                    {msg.content}
-                  </div>
-                </div>
-              ))}
-              {isLoading && (
-                <div className="flex justify-start">
-                  <div className="bg-white px-4 py-2.5 rounded-2xl shadow-sm border border-slate-100 rounded-tl-none">
-                    <div className="flex gap-1">
-                      <div className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce" />
-                      <div className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce [animation-delay:0.2s]" />
-                      <div className="w-1.5 h-1.5 bg-slate-300 rounded-full animate-bounce [animation-delay:0.4s]" />
+                )}
+                {messages.map((msg, i) => (
+                  <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-[80%] px-6 py-3 rounded-2xl ${
+                      msg.role === 'user' ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white border shadow-sm rounded-tl-none'
+                    }`}>
+                      <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
                     </div>
                   </div>
-                </div>
-              )}
-              <div ref={chatEndRef} />
-            </div>
+                ))}
+                {isAssistantLoading && (
+                  <div className="flex justify-start">
+                    <div className="bg-white border px-4 py-2 rounded-2xl shadow-sm">
+                      <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
+                    </div>
+                  </div>
+                )}
+                <div ref={chatEndRef} />
+              </div>
 
-            {/* Input Area */}
-            <div className="p-4 bg-white border-t flex gap-2">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSendMessage(e as unknown as React.FormEvent);
-                  }
-                }}
-                placeholder="Type a message..."
-                className="flex-1 bg-slate-100 border-none rounded-full px-4 py-2 text-sm focus:ring-2 focus:ring-blue-600 outline-none"
-              />
-              <button 
-                type="button"
-                onClick={(e) => handleSendMessage(e as unknown as React.FormEvent)}
-                disabled={isLoading || !input.trim()}
-                className="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 disabled:opacity-50 transition"
-              >
-                <Send className="h-4 w-4" />
-              </button>
+              <form onSubmit={handleSendMessage} className="p-4 border-t flex gap-2">
+                <input
+                  type="text"
+                  value={assistantInput}
+                  onChange={(e) => setAssistantInput(e.target.value)}
+                  placeholder="Ask me to write an email..."
+                  className="flex-1 px-4 py-3 rounded-xl bg-slate-100 focus:bg-white border-none focus:ring-2 focus:ring-blue-600 transition outline-none"
+                />
+                <button
+                  disabled={isAssistantLoading || !assistantInput.trim()}
+                  className="bg-blue-600 text-white p-3 rounded-xl hover:bg-blue-700 transition disabled:opacity-50"
+                >
+                  <Send className="h-5 w-5" />
+                </button>
+              </form>
             </div>
-          </div>
-          <p className="text-center text-[10px] text-slate-400 mt-6 uppercase tracking-widest font-bold">
-            Live demo. Full phone version activates after setup.
-          </p>
-        </div>
-      </section>
+          )}
 
-      {/* Finalize Section */}
-      <section id="payment" className="py-24 bg-slate-900 text-white relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-extrabold text-white mb-4 tracking-tight">PSL Founding Clinic Special</h2>
-            <div className="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg text-2xl font-bold mb-4">
-              $500 Setup + $100/mo
-            </div>
-            <p className="text-slate-400 text-lg">
-              $600 due today covers setup + first month.<br />
-              Next bill day 60. Cancel anytime.
-            </p>
-          </div>
-          <div className="max-w-md mx-auto bg-white rounded-3xl p-8 shadow-2xl text-center text-slate-900">
-            <h3 className="text-2xl font-bold mb-6">Ready to start?</h3>
-            <p className="text-slate-600 mb-8 leading-relaxed">
-              We are currently accepting only 3 more clinics for the Founding Special. 
-              DM us on Instagram to receive your secure payment link and start your 24-hour setup.
-            </p>
-            <a 
-              href={INSTAGRAM_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition shadow-lg shadow-blue-200 flex items-center justify-center gap-2 text-lg"
-            >
-              DM @desi_gnerai to Secure Spot
-              <ArrowRight className="h-5 w-5" />
-            </a>
-            <p className="text-xs text-slate-400 mt-6">
-              Your AI agent goes live in 24 hours after setup.
-            </p>
-          </div>
-        </div>
-      </section>
+          {activeTab === 'leads' && (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+                <table className="w-full text-left">
+                  <thead className="bg-slate-50 border-b text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    <tr>
+                      <th className="px-6 py-4">Agent / Company</th>
+                      <th className="px-6 py-4">Status</th>
+                      <th className="px-6 py-4">Contact</th>
+                      <th className="px-6 py-4 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y">
+                    {leads.map((lead) => (
+                      <tr key={lead.id} className="hover:bg-slate-50/50 transition">
+                        <td className="px-6 py-4">
+                          <div className="font-bold text-slate-900">{lead.name}</div>
+                          <div className="text-xs text-slate-500 flex items-center gap-1">
+                            <Building2 className="h-3 w-3" />
+                            {lead.company}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                            lead.status === 'new' ? 'bg-blue-50 text-blue-700' : 'bg-amber-50 text-amber-700'
+                          }`}>
+                            {lead.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-slate-600">{lead.email}</td>
+                        <td className="px-6 py-4 text-right">
+                          <button
+                            onClick={() => handleSendEmail(lead)}
+                            disabled={isSending === lead.id || lead.status === 'contacted'}
+                            className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 disabled:opacity-50"
+                          >
+                            {isSending === lead.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
 
-      {/* Footer */}
-      <footer className="bg-white py-12 border-t">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="flex items-center gap-2">
-            <div className="bg-blue-600 p-1.5 rounded-md">
-              <ShieldCheck className="text-white h-4 w-4" />
+              <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
+                <h3 className="font-bold mb-4">Last Sent Outreach</h3>
+                {lastSentContent ? (
+                  <div className="bg-slate-50 p-4 rounded-xl text-sm whitespace-pre-wrap text-slate-700 border">
+                    {lastSentContent}
+                  </div>
+                ) : (
+                  <p className="text-slate-400 text-sm italic">Send an email to preview content here.</p>
+                )}
+              </div>
             </div>
-            <span className="text-lg font-bold tracking-tight">DentalAI</span>
-          </div>
-          <p className="text-slate-500 text-sm">
-            © 2024 DentalAI. HIPAA Compliant. All rights reserved.
-          </p>
-          <div className="flex gap-6">
-            <a href="#" className="text-slate-400 hover:text-slate-600 text-sm">Privacy</a>
-            <a href="#" className="text-slate-400 hover:text-slate-600 text-sm">Terms</a>
-          </div>
+          )}
         </div>
-      </footer>
+      </main>
     </div>
   );
 }

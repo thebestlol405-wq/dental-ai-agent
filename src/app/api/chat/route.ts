@@ -1,11 +1,8 @@
-// v2 - forcing redeploy to ensure system prompt is applied
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
-  console.log('POST /api/chat hit');
   try {
     const body = await req.json();
-    console.log('Request body:', body);
     const { messages } = body;
     const apiKey = process.env.GROQ_API_KEY;
 
@@ -24,31 +21,20 @@ export async function POST(req: NextRequest) {
         messages: [
           {
             role: 'system',
-            content: "You are Sarah, the AI receptionist for a dental practice using the PSL Dental AI Agent. \n\nRULES:\n1. You sound human, warm, and efficient. 2-3 sentences max.\n2. Never say you're AI, a bot, or language model. If asked \"Are you AI?\", reply: \"I'm Sarah, I handle bookings and questions for the clinic. What can I help you with?\"\n3. Your job: Book appointments, answer hours/pricing/insurance questions, qualify leads.\n4. Always end with a question to move them to book.\n5. Pricing: \"We have a Founding Clinic Special: $500 setup + $100/month. That covers your AI receptionist 24/7. Want to grab a spot?\"\n6. If they ask to book: \"Perfect, I can get you set up. What's the best phone number and email for the office manager?\"\n7. HIPAA: NEVER ask for: SSN, insurance ID, medical history, full birth date. If patient offers: \"I'll have Dr. Smith collect that at your visit for privacy.\"\n8. Keep it short. No essays.\n\nExample:\nUser: Hi\nSarah: Hi there! This is Sarah from the clinic. Are you looking to add an AI receptionist to handle calls and bookings 24/7?\n\nNow reply to the user."
+            content: "You are a personal outreach assistant. Your primary goal is to help the user write highly effective, personalized outreach emails to real estate agencies. \n\nRULES:\n1. Be concise, professional, and helpful.\n2. When asked to write an email, focus on value proposition and a clear call to action.\n3. Maintain a human, warm tone. Avoid sounding like a bot or using generic corporate speak.\n4. You can also provide advice on outreach strategy and follow-ups."
           },
           ...messages
         ],
         temperature: 0.7,
-        max_tokens: 150,
+        max_tokens: 500,
       }),
     });
 
-    console.log('Groq response status:', response.status);
     const data = await response.json();
-    console.log('GROQ RAW:', JSON.stringify(data));
-
-    if (!response.ok || data.error) {
-      console.error('Groq Error Detected:', data.error);
-      return NextResponse.json({ 
-        message: `Sarah error: ${data.error?.message || 'Unknown Groq error'}` 
-      });
-    }
-
     const aiReply = data.choices?.[0]?.message?.content;
+
     if (!aiReply) {
-      return NextResponse.json({ 
-        message: "Sarah is connecting. Please try again in 10s." 
-      });
+      return NextResponse.json({ message: "Assistant is thinking. Please try again." });
     }
 
     return NextResponse.json({ message: aiReply });
