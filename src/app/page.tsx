@@ -36,16 +36,24 @@ export default function Dashboard() {
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const fetchLeads = async () => {
+    const initData = async () => {
       try {
-        const response = await fetch('/api/leads');
-        const data = await response.json();
-        setLeads(data);
+        // Fetch leads
+        const leadsRes = await fetch('/api/leads');
+        const leadsData = await leadsRes.json();
+        setLeads(leadsData);
+
+        // Fetch chat history
+        const chatRes = await fetch('/api/chat');
+        const chatData = await chatRes.json();
+        if (chatData && chatData.length > 0) {
+          setMessages(chatData);
+        }
       } catch (error) {
-        console.error('Failed to fetch leads:', error);
+        console.error('Failed to initialize data:', error);
       }
     };
-    fetchLeads();
+    initData();
   }, []);
 
   useEffect(() => {

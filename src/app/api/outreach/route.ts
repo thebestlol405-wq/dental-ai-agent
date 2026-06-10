@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { sendEmail } from '@/lib/mail';
 
 export async function POST(req: NextRequest) {
   try {
@@ -51,14 +52,28 @@ Email: ${email}`;
       return NextResponse.json({ error: 'Failed to generate email content' }, { status: 500 });
     }
 
-    console.log('--- MOCK EMAIL GENERATED ---');
-    console.log(`To: ${email}`);
-    console.log(`Subject: ${emailData.subject}`);
-    console.log('-----------------------');
+    // REAL EMAIL SEND
+    try {
+      await sendEmail({
+        to: email,
+        subject: emailData.subject,
+        text: emailData.body
+      });
+      console.log(`Email successfully sent to ${email}`);
+    } catch (mailError) {
+      console.error('Nodemailer Error:', mailError);
+      return NextResponse.json({
+        success: true,
+        message: 'Email generated but failed to send via SMTP. Please check your credentials.',
+        subject: emailData.subject,
+        content: emailData.body,
+        error: 'SMTP_FAILURE'
+      });
+    }
 
     return NextResponse.json({
       success: true,
-      message: 'Email generated',
+      message: 'Email generated and sent!',
       subject: emailData.subject,
       content: emailData.body
     });

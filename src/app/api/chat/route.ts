@@ -1,5 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import fs from 'fs';
+import path from 'path';
+import { sendEmail } from '@/lib/mail';
+
+const leadsFilePath = path.join(process.cwd(), 'src/data/leads.json');
+const chatHistoryPath = path.join(process.cwd(), 'src/data/chat_history.json');
+
+export async function GET() {
+  try {
+    const history = JSON.parse(fs.readFileSync(chatHistoryPath, 'utf8'));
+    return NextResponse.json(history);
+  } catch {
+    return NextResponse.json([]);
+  }
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,10 +26,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Gemini API Key not found' }, { status: 500 });
     }
 
+    const leads = JSON.parse(fs.readFileSync(leadsFilePath, 'utf8'));
+    const leadsContext = leads.map((l: { name: string; company: string; email: string }) => `${l.name} (${l.company}) - ${l.email}`).join('\n');
+
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
       model: "gemini-1.5-flash",
-      systemInstruction: "You are a personal outreach assistant. Your primary goal is to help the user write highly effective, personalized outreach emails to real estate agencies. \n\nRULES:\n1. Be concise, professional, and helpful.\n2. When asked to write an email, focus on value proposition and a clear call to action.\n3. Maintain a human, warm tone. Avoid sounding like a bot or using generic corporate speak.\n4. You can also provide advice on outreach strategy and follow-ups."
+      systemInstruction: `You are a personal outreach assistant for Real Estate.
+Current Leads in Database:
+${leadsContext}
+
+RULES:
+1. Be concise, professional, and human-like.
+2. You can help draft emails or actually SEND them if the user asks.
+3. To send an email, your response MUST contain a JSON block like this:
+   {"action": "send_email", "to": "email@example.com", "subject": "Subject Line", "body": "Email body content"}
+4. If you are just chatting or drafting, do NOT include the JSON block.
+5. Remember user preferences and past interactions.`
     });
 
     const chat = model.startChat({
@@ -31,7 +59,30 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "Assistant is thinking. Please try again." });
     }
 
-    return NextResponse.json({ message: aiReply });
+    // Check for email action
+    let finalReply = aiReply;
+    try {
+      const jsonMatch = aiReply.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        const actionData = JSON.parse(jsonMatch[0]);
+        if (actionData.action === 'send_email') {
+          await sendEmail({
+            to: actionData.to,
+            subject: actionData.subject,
+            text: actionData.body
+          });
+          finalReply = aiReply.replace(jsonMatch[0], "\n\n✅ **Email sent successfully!**");
+        }
+      }
+    } catch (e) {
+      console.error('Action processing error:', e);
+    }
+
+    // Save history
+    const history = [...messages, { role: 'assistant', content: finalReply }];
+    fs.writeFileSync(chatHistoryPath, JSON.stringify(history, null, 2));
+
+    return NextResponse.json({ message: finalReply });
   } catch (error) {
     console.error('Chat API Error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
