@@ -1,0 +1,72 @@
+[
+  {
+    "id": "1",
+    "name": "Myra Morales",
+    "company": "LAER Realty Partners",
+    "email": "myrateammorales@gmail.com",
+    "status": "new"
+  },
+  {
+    "id": "2",
+    "name": "Alex Adorno",
+    "company": "The Keyes Company",
+    "email": "AlexAdorno@keyes.com",
+    "status": "new"
+  },
+  {
+    "id": "3",
+    "name": "Erik Alvarez",
+    "company": "The Keyes Company",
+    "email": "ErikAlvarez@Keyes.com",
+    "status": "new"
+  },
+  {
+    "id": "4",
+    "name": "Tom Anton",
+    "company": "The Keyes Company",
+    "email": "AtoZ@keyes.com",
+    "status": "new"
+  },
+  {
+    "id": "5",
+    "name": "Catherine Barbre",
+    "company": "The Keyes Company",
+    "email": "cathybarbre@keyes.com",
+    "status": "new"
+  },
+  {
+    "id": "6",
+    "name": "Hamid Hakimi",
+    "company": "Port St Lucie Real Estate",
+    "email": "info@portstlucie.city",
+    "status": "new"
+  },
+  {
+    "id": "7",
+    "name": "Julio Sanchez",
+    "company": "Coldwell Banker Paradise",
+    "email": "julio.sanchez@cbparadise.com",
+    "status": "new"
+  },
+  {
+    "id": "8",
+    "name": "Marlene Reyes",
+    "company": "Coldwell Banker Paradise",
+    "email": "marlene.reyes@cbparadise.com",
+    "status": "new"
+  },
+  {
+    "id": "9",
+    "name": "Karen Pfalz",
+    "company": "Coldwell Banker Paradise",
+    "email": "karen.pfalz@cbparadise.com",
+    "status": "new"
+  },
+  {
+    "id": "10",
+    "name": "Nathan Berlin",
+    "company": "RE/MAX Masterpiece Realty",
+    "email": "nberlin@remaxmasterpiecerealty.com",
+    "status": "new"
+  }
+]

@@ -5,9 +5,6 @@ import { CheckCircle, ShieldCheck, Zap, ArrowRight, MessageCircle, Copy, Check, 
 
 export default function LandingPage() {
   const INSTAGRAM_LINK = "https://instagram.com/desi_gnerai"; 
-  const SOLANA_WALLET = "9P6tP5XQeMuygKNAja1CoFaMfXjhWS1BSNxLu2tM5jKT"; 
-  const [copied, setCopied] = useState(false);
-
   // Chat State
   const [messages, setMessages] = useState<{ role: 'user' | 'assistant', content: string }[]>([]);
   const [input, setInput] = useState('');
@@ -59,12 +56,6 @@ export default function LandingPage() {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(SOLANA_WALLET);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -217,10 +208,10 @@ export default function LandingPage() {
                 <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
                   <div className="bg-white p-4 rounded-2xl shadow-sm mb-4">
                     <p className="text-sm text-slate-500 leading-relaxed">
-                      "Hi! I'm Sarah. I can help you book an appointment or answer questions about our clinic."
+                      &quot;Hi! I&apos;m Sarah. I can help you book an appointment or answer questions about our clinic.&quot;
                     </p>
                   </div>
-                  <p className="text-xs font-bold text-blue-600 animate-bounce">Type "I need a cleaning" to start</p>
+                  <p className="text-xs font-bold text-blue-600 animate-bounce">Type &quot;I need a cleaning&quot; to start</p>
                 </div>
               )}
               
@@ -258,7 +249,7 @@ export default function LandingPage() {
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
-                    handleSendMessage(e as any);
+                    handleSendMessage(e as unknown as React.FormEvent);
                   }
                 }}
                 placeholder="Type a message..."
@@ -266,7 +257,7 @@ export default function LandingPage() {
               />
               <button 
                 type="button"
-                onClick={(e) => handleSendMessage(e as any)}
+                onClick={(e) => handleSendMessage(e as unknown as React.FormEvent)}
                 disabled={isLoading || !input.trim()}
                 className="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 disabled:opacity-50 transition"
               >
