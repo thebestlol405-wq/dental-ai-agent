@@ -31,8 +31,8 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description="Double Agent — local business scraping + cold email automation",
     )
-    parser.add_argument("--city", required=True, help="Target city (e.g., 'Toronto')")
-    parser.add_argument("--industry", required=True, help="Target industry (e.g., 'MedSpa')")
+    parser.add_argument("--city", default=None, help="Target city (e.g., 'Toronto')")
+    parser.add_argument("--industry", default=None, help="Target industry (e.g., 'MedSpa')")
     parser.add_argument("--max-leads", type=int, default=20,
                         help="Max leads to scrape per run (default: 20)")
     parser.add_argument("--scrape-only", action="store_true",
@@ -65,6 +65,12 @@ def main():
     if args.stats:
         show_stats(db)
         return
+
+    # Validate city/industry are provided for scrape/send operations
+    if not args.city or not args.industry:
+        print("❌ Error: --city and --industry are required for scraping and sending.")
+        print("   Use --stats to view database stats without these arguments.")
+        sys.exit(1)
 
     # ── Step 1: Scrape ────────────────────────────────────
     if not args.send_only:
