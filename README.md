@@ -37,10 +37,13 @@ DoubleAgent is now a specialized tool for Real Estate outreach.
 
 ## Environment Variables
 
-Make sure you have a `.env.local` file with your Groq API key:
+Make sure you have a `.env.local` file with your Google Gemini API key:
 ```
-GROQ_API_KEY=your_api_key_here
+GEMINI_API_KEY=your_api_key_here
 ```
+
+### Persistence Note
+Currently, this project stores leads in a local file (`src/data/leads.json`). This is designed for local development. For production deployment (e.g., Vercel), you should replace the file-based logic in the API routes with a database like Supabase, MongoDB, or PostgreSQL.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 

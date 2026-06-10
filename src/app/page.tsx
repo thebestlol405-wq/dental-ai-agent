@@ -89,6 +89,11 @@ export default function Dashboard() {
     e.preventDefault();
     if (!assistantInput.trim() || isAssistantLoading) return;
 
+    // Mobile: hide keyboard on submit
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+
     const userMessage = assistantInput.trim();
     setAssistantInput('');
     const newMessages = [...messages, { role: 'user' as const, content: userMessage }];
@@ -145,9 +150,9 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row">
+    <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row h-screen overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-full md:w-64 bg-slate-900 text-white p-6 flex flex-col gap-8">
+      <aside className="w-full md:w-64 bg-slate-900 text-white p-4 md:p-6 flex flex-col gap-4 md:gap-8 border-b md:border-r border-slate-800 shrink-0">
         <div className="flex items-center gap-3">
           <div className="bg-blue-600 p-2 rounded-lg">
             <ShieldCheck className="text-white h-6 w-6" />
@@ -155,26 +160,26 @@ export default function Dashboard() {
           <span className="text-xl font-bold tracking-tight">DoubleAgent</span>
         </div>
 
-        <nav className="flex flex-col gap-2">
+        <nav className="flex flex-row md:flex-col gap-2 overflow-x-auto no-scrollbar pb-2 md:pb-0">
           <button
             onClick={() => setActiveTab('scraper')}
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition font-medium ${activeTab === 'scraper' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:bg-slate-800'}`}
+            className={`flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-xl transition font-medium whitespace-nowrap ${activeTab === 'scraper' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:bg-slate-800'}`}
           >
-            <Search className="h-5 w-5" />
+            <Search className="h-4 w-4 md:h-5 md:w-5" />
             Scraper
           </button>
           <button
             onClick={() => setActiveTab('assistant')}
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition font-medium ${activeTab === 'assistant' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:bg-slate-800'}`}
+            className={`flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-xl transition font-medium whitespace-nowrap ${activeTab === 'assistant' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:bg-slate-800'}`}
           >
-            <Bot className="h-5 w-5" />
+            <Bot className="h-4 w-4 md:h-5 md:w-5" />
             Assistant
           </button>
           <button
             onClick={() => setActiveTab('leads')}
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition font-medium ${activeTab === 'leads' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:bg-slate-800'}`}
+            className={`flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-xl transition font-medium whitespace-nowrap ${activeTab === 'leads' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:bg-slate-800'}`}
           >
-            <Users className="h-5 w-5" />
+            <Users className="h-4 w-4 md:h-5 md:w-5" />
             Leads
           </button>
         </nav>
@@ -189,34 +194,34 @@ export default function Dashboard() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
-        <header className="bg-white border-b px-8 py-6 flex justify-between items-center sticky top-0 z-10">
+      <main className="flex-1 overflow-y-auto h-full flex flex-col">
+        <header className="bg-white border-b px-4 md:px-8 py-4 md:py-6 flex justify-between items-center sticky top-0 z-10 shrink-0">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">
+            <h1 className="text-xl md:text-2xl font-bold text-slate-900">
               {activeTab === 'scraper' ? 'Agency Scraper' : activeTab === 'assistant' ? 'Email Assistant' : 'Real Estate Leads'}
             </h1>
-            <p className="text-slate-500 text-sm">Targeting: USA & Canada</p>
+            <p className="text-slate-500 text-xs md:text-sm">Targeting: USA & Canada</p>
           </div>
         </header>
 
-        <div className="p-8">
+        <div className="p-4 md:p-8 flex-1">
           {activeTab === 'scraper' && (
-            <div className="max-w-2xl mx-auto py-12 text-center">
-              <Zap className="h-12 w-12 text-blue-600 mx-auto mb-6" />
-              <h2 className="text-3xl font-extrabold text-slate-900 mb-4">Find Real Estate Agencies</h2>
-              <p className="text-slate-600 mb-8">Enter a city or region to scrape agency data and contact emails.</p>
+            <div className="max-w-2xl mx-auto py-6 md:py-12 text-center">
+              <Zap className="h-10 w-10 md:h-12 md:w-12 text-blue-600 mx-auto mb-4 md:mb-6" />
+              <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2 md:mb-4">Find Real Estate Agencies</h2>
+              <p className="text-slate-600 mb-6 md:mb-8 text-sm md:text-base">Enter a city or region to scrape agency data and contact emails.</p>
 
-              <form onSubmit={handleScrape} className="flex gap-2">
+              <form onSubmit={handleScrape} className="flex flex-col md:flex-row gap-2">
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="e.g. Miami, FL or Toronto, ON"
-                  className="flex-1 px-6 py-4 rounded-2xl border-2 border-slate-200 focus:border-blue-600 outline-none transition"
+                  className="flex-1 px-5 md:px-6 py-3 md:py-4 rounded-2xl border-2 border-slate-200 focus:border-blue-600 outline-none transition text-sm md:text-base"
                 />
                 <button
                   disabled={isScraping || !searchQuery.trim()}
-                  className="bg-blue-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-blue-700 disabled:opacity-50 transition shadow-xl shadow-blue-200 flex items-center gap-2"
+                  className="bg-blue-600 text-white px-6 md:px-8 py-3 md:py-4 rounded-2xl font-bold hover:bg-blue-700 disabled:opacity-50 transition shadow-xl shadow-blue-200 flex items-center justify-center gap-2 text-sm md:text-base"
                 >
                   {isScraping ? <Loader2 className="h-5 w-5 animate-spin" /> : <Search className="h-5 w-5" />}
                   Scrape
@@ -226,7 +231,7 @@ export default function Dashboard() {
           )}
 
           {activeTab === 'assistant' && (
-            <div className="max-w-3xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col h-[600px] border border-slate-200">
+            <div className="max-w-3xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col h-full max-h-[700px] border border-slate-200">
               <div className="p-6 border-b flex items-center gap-4">
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                   <Bot className="text-blue-600 h-8 w-8" />
@@ -282,36 +287,36 @@ export default function Dashboard() {
           )}
 
           {activeTab === 'leads' && (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-                <table className="w-full text-left">
+            <div className="flex flex-col gap-6 h-full">
+              <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-x-auto">
+                <table className="w-full text-left min-w-[600px]">
                   <thead className="bg-slate-50 border-b text-xs font-bold text-slate-500 uppercase tracking-wider">
                     <tr>
-                      <th className="px-6 py-4">Agent / Company</th>
-                      <th className="px-6 py-4">Status</th>
-                      <th className="px-6 py-4">Contact</th>
-                      <th className="px-6 py-4 text-right">Action</th>
+                      <th className="px-4 md:px-6 py-3 md:py-4">Agent / Company</th>
+                      <th className="px-4 md:px-6 py-3 md:py-4">Status</th>
+                      <th className="px-4 md:px-6 py-3 md:py-4">Contact</th>
+                      <th className="px-4 md:px-6 py-3 md:py-4 text-right">Action</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y">
                     {leads.map((lead) => (
                       <tr key={lead.id} className="hover:bg-slate-50/50 transition">
-                        <td className="px-6 py-4">
-                          <div className="font-bold text-slate-900">{lead.name}</div>
-                          <div className="text-xs text-slate-500 flex items-center gap-1">
+                        <td className="px-4 md:px-6 py-3 md:py-4">
+                          <div className="font-bold text-slate-900 text-sm">{lead.name}</div>
+                          <div className="text-[10px] md:text-xs text-slate-500 flex items-center gap-1">
                             <Building2 className="h-3 w-3" />
                             {lead.company}
                           </div>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-4 md:px-6 py-3 md:py-4">
                           <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
                             lead.status === 'new' ? 'bg-blue-50 text-blue-700' : 'bg-amber-50 text-amber-700'
                           }`}>
                             {lead.status}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-sm text-slate-600">{lead.email}</td>
-                        <td className="px-6 py-4 text-right">
+                        <td className="px-4 md:px-6 py-3 md:py-4 text-xs md:text-sm text-slate-600">{lead.email}</td>
+                        <td className="px-4 md:px-6 py-3 md:py-4 text-right">
                           <button
                             onClick={() => handleSendEmail(lead)}
                             disabled={isSending === lead.id || lead.status === 'contacted'}
@@ -326,8 +331,8 @@ export default function Dashboard() {
                 </table>
               </div>
 
-              <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
-                <h3 className="font-bold mb-4">Last Sent Outreach</h3>
+              <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-4 md:p-6 shrink-0">
+                <h3 className="font-bold text-sm md:text-base mb-3 md:mb-4">Last Sent Outreach</h3>
                 {lastSentContent ? (
                   <div className="bg-slate-50 p-4 rounded-xl text-sm whitespace-pre-wrap text-slate-700 border">
                     {lastSentContent}

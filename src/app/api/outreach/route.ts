@@ -1,15 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(req: NextRequest) {
   try {
     const { leadId, name, company, email } = await req.json();
-    const apiKey = process.env.GROQ_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
-      return NextResponse.json({ error: 'Groq API Key not found' }, { status: 500 });
+      return NextResponse.json({ error: 'Gemini API Key not found' }, { status: 500 });
     }
 
-    const systemPrompt = `You are a business development representative for an automation agency.
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+    const prompt = `You are a business development representative for an automation agency.
 We build AI solutions for real estate agencies to help them handle leads and client questions 24/7.
 
 Write a short, professional, and highly personalized outreach email to a real estate professional.
@@ -26,25 +30,8 @@ Name: ${name}
 Company: ${company}
 Email: ${email}`;
 
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: 'Generate the email.' }
-        ],
-        temperature: 0.7,
-        max_tokens: 300,
-      }),
-    });
-
-    const data = await response.json();
-    const emailContent = data.choices?.[0]?.message?.content;
+    const result = await model.generateContent(prompt);
+    const emailContent = result.response.text();
 
     if (!emailContent) {
       return NextResponse.json({ error: 'Failed to generate email content' }, { status: 500 });
