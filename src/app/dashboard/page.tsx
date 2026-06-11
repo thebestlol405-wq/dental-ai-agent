@@ -16,8 +16,23 @@ import {
   CheckCircle2,
   AlertCircle,
   MoreVertical,
-  Home
+  Home,
+  History,
+  Info
 } from 'lucide-react';
+
+interface OutreachLog {
+  id: string;
+  timestamp: string;
+  to: string;
+  email?: string;
+  name: string;
+  company: string;
+  subject: string;
+  body: string;
+  status: 'sent' | 'failed';
+  error?: string;
+}
 
 interface Lead {
   id: string;
@@ -35,10 +50,12 @@ export default function Dashboard() {
   const [isSending, setIsSending] = useState<string | null>(null);
   const [isBulkSending, setIsBulkSending] = useState(false);
   const [lastSentContent, setLastSentContent] = useState<{ subject: string, body: string, email: string } | null>(null);
-  const [activeTab, setActiveTab] = useState<'scraper' | 'assistant' | 'leads'>('scraper');
+  const [activeTab, setActiveTab] = useState<'scraper' | 'assistant' | 'leads' | 'history'>('scraper');
+  const [outreachHistory, setOutreachHistory] = useState<OutreachLog[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [leadSearchQuery, setLeadSearchQuery] = useState('');
   const [isScraping, setIsScraping] = useState(false);
+  const [isTestingSMTP, setIsTestingSMTP] = useState(false);
   const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null);
   const [editingLead, setEditingLead] = useState<Lead | null>(null);
 
@@ -60,6 +77,10 @@ export default function Dashboard() {
         if (chatData && chatData.length > 0) {
           setMessages(chatData);
         }
+
+        const historyRes = await fetch('/api/outreach-history');
+        const historyData = await historyRes.json();
+        setOutreachHistory(historyData);
       } catch (error) {
         console.error('Failed to initialize data:', error);
       }
@@ -85,6 +106,33 @@ export default function Dashboard() {
       setLeads(data);
     } catch (error) {
       console.error('Failed to fetch leads:', error);
+    }
+  };
+
+  const refreshHistory = async () => {
+    try {
+      const response = await fetch('/api/outreach-history');
+      const data = await response.json();
+      setOutreachHistory(data);
+    } catch (error) {
+      console.error('Failed to fetch history:', error);
+    }
+  };
+
+  const handleTestSMTP = async () => {
+    setIsTestingSMTP(true);
+    try {
+      const response = await fetch('/api/test-smtp', { method: 'POST' });
+      const data = await response.json();
+      if (data.success) {
+        setNotification({ type: 'success', message: 'SMTP Configuration is correct!' });
+      } else {
+        setNotification({ type: 'error', message: data.message || 'SMTP Test Failed' });
+      }
+    } catch (error) {
+      setNotification({ type: 'error', message: 'SMTP Test Failed' });
+    } finally {
+      setIsTestingSMTP(false);
     }
   };
 
@@ -171,6 +219,7 @@ export default function Dashboard() {
           body: JSON.stringify({ id: lead.id, status: 'contacted' }),
         });
         await refreshLeads();
+        await refreshHistory();
         setNotification({ type: 'success', message: `Email sent to ${lead.name}` });
       } else {
         setNotification({ type: 'error', message: `Failed to send to ${lead.name}` });
@@ -222,6 +271,7 @@ export default function Dashboard() {
     }
 
     await refreshLeads();
+    await refreshHistory();
     setIsBulkSending(false);
     setNotification({ type: 'success', message: `Bulk send complete: ${successCount}/${newLeads.length} successful` });
   };
@@ -387,6 +437,13 @@ export default function Dashboard() {
             <Users className="h-4 w-4 md:h-5 md:w-5" />
             Leads
           </button>
+          <button
+            onClick={() => setActiveTab('history')}
+            className={`flex items-center gap-2 md:gap-3 px-4 py-2 md:py-3 rounded-xl transition font-medium whitespace-nowrap ${activeTab === 'history' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:bg-slate-800'}`}
+          >
+            <History className="h-4 w-4 md:h-5 md:w-5" />
+            History
+          </button>
         </nav>
 
         <div className="mt-auto pt-4 border-t border-slate-800 hidden md:block">
@@ -404,7 +461,10 @@ export default function Dashboard() {
         <header className="bg-white border-b px-4 md:px-8 py-4 md:py-6 flex justify-between items-center sticky top-0 z-10 shrink-0">
           <div>
             <h1 className="text-xl md:text-2xl font-bold text-slate-900">
-              {activeTab === 'scraper' ? 'Agency Scraper' : activeTab === 'assistant' ? 'Email Assistant' : 'Real Estate Leads'}
+              {activeTab === 'scraper' ? 'Agency Scraper' :
+               activeTab === 'assistant' ? 'Email Assistant' :
+               activeTab === 'history' ? 'Outreach History' :
+               'Real Estate Leads'}
             </h1>
           </div>
           {activeTab === 'leads' && (
@@ -434,6 +494,21 @@ export default function Dashboard() {
         <div className="p-4 md:p-8 flex-1">
           {activeTab === 'scraper' && (
             <div className="max-w-2xl mx-auto py-6 md:py-12 text-center">
+              <div className="mb-10 p-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-start gap-4 text-left">
+                <Info className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
+                <div className="text-xs text-blue-800 leading-relaxed">
+                  <p className="font-bold mb-1">Configuration Required</p>
+                  <p>To use the full potential of DoubleAgent, ensure your <b>GEMINI_API_KEY</b> and <b>SMTP settings</b> are configured in the environment. Click below to test your current email setup. <b>Note:</b> Data is currently stored locally; integrate a database like Supabase or MongoDB for production persistence on Vercel.</p>
+                  <button
+                    onClick={handleTestSMTP}
+                    disabled={isTestingSMTP}
+                    className="mt-3 bg-white text-blue-600 px-4 py-1.5 rounded-lg font-bold border border-blue-200 hover:bg-blue-50 transition flex items-center gap-2 disabled:opacity-50"
+                  >
+                    {isTestingSMTP ? <Loader2 className="h-3 w-3 animate-spin" /> : <Zap className="h-3 w-3" />}
+                    Test SMTP Connection
+                  </button>
+                </div>
+              </div>
               <Zap className="h-10 w-10 md:h-12 md:w-12 text-blue-600 mx-auto mb-4 md:mb-6" />
               <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2 md:mb-4">Find Real Estate Agencies</h2>
               <p className="text-slate-600 mb-6 md:mb-8 text-sm md:text-base">Enter a city or region to scrape agency data and contact emails.</p>
@@ -510,6 +585,55 @@ export default function Dashboard() {
                   <Send className="h-5 w-5" />
                 </button>
               </form>
+            </div>
+          )}
+
+          {activeTab === 'history' && (
+            <div className="max-w-5xl mx-auto flex flex-col gap-4">
+              {outreachHistory.length === 0 ? (
+                <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-300">
+                  <History className="h-12 w-12 text-slate-300 mx-auto mb-4" />
+                  <p className="text-slate-500">No outreach history found yet. Start contacting leads!</p>
+                </div>
+              ) : (
+                <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="bg-slate-50 border-b border-slate-200">
+                          <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Date</th>
+                          <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Recipient</th>
+                          <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Subject</th>
+                          <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {outreachHistory.slice().reverse().map((log) => (
+                          <tr key={log.id} className="hover:bg-slate-50 transition-colors">
+                            <td className="px-6 py-4 text-sm text-slate-600 whitespace-nowrap">
+                              {new Date(log.timestamp).toLocaleDateString()} {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="text-sm font-bold text-slate-900">{log.name}</div>
+                              <div className="text-xs text-slate-500">{log.email || log.to}</div>
+                            </td>
+                            <td className="px-6 py-4 text-sm text-slate-600 max-w-xs truncate">
+                              {log.subject}
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${
+                                log.status === 'sent' ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'
+                              }`}>
+                                {log.status}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 

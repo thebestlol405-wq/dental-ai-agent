@@ -27,18 +27,21 @@ export async function POST(req: NextRequest) {
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
 
-    const prompt = `You are a real estate data scraper. I need 5 realistic real estate agencies or agents located in or near "${query}".
-Output the results in JSON format as an array of objects. Each object must have:
-- name: Full name of the agent or agency owner
-- company: Name of the real estate agency
-- email: A professional-looking email address
-- phone: A realistic business phone number
-- website: A realistic business website URL
-- description: A short (1-sentence) description of their specialization (e.g., "Luxury beachfront properties")
-- status: "new"
+    const prompt = `You are a professional real estate lead researcher. I need 8 high-quality, realistic leads for real estate agencies or top-performing agents located in or near "${query}".
 
-Make sure the data looks authentic for the region "${query}".
-ONLY return the JSON array, no other text.`;
+Requirements for each lead:
+- name: Full name of a principal broker or lead agent.
+- company: The specific name of their real estate agency.
+- email: A professional business email address (e.g., name@agency.com).
+- phone: A local phone number formatted correctly for the region.
+- website: A valid-looking URL for their business.
+- description: A compelling 1-2 sentence description of their expertise, target market, or notable achievements in "${query}".
+- status: Must be exactly "new".
+
+Diversity: Include a mix of luxury specialists, commercial brokers, and residential teams.
+Authenticity: Ensure the agency names and specializations reflect the actual market characteristics of "${query}".
+
+Output Format: Return ONLY a valid JSON array of objects. No markdown formatting, no conversational text.`;
 
     const result = await model.generateContent(prompt);
     const text = result.response.text();

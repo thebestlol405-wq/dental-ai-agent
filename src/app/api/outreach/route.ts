@@ -18,23 +18,32 @@ export async function POST(req: NextRequest) {
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
 
-    const prompt = `You are a business development representative for an automation agency.
-We build AI solutions for real estate agencies to help them handle leads and client questions 24/7.
+    const prompt = `You are an expert sales strategist specialized in real estate technology.
+We are offering a cutting-edge AI assistant for real estate agencies that handles 24/7 lead qualification, appointment booking, and property inquiries.
 
-Write a short, professional, and highly personalized outreach email to a real estate professional.
-Goal: Offer a 10-minute demo of how our AI can help their agency never miss a lead again.
-
-Rules:
-1. Short and punchy (under 100 words).
-2. Human-like tone, not corporate.
-3. Subject line should be catchy but professional.
-4. Mention that we are looking for a "Founding Agency" to receive a special rate ($500 setup + $100/mo).
-5. Output the result in JSON format with two fields: "subject" and "body".
-
-Lead Info:
+Write a highly personalized, compelling outreach email to:
 Name: ${name}
 Company: ${company}
-Email: ${email}`;
+
+Lead Context/Description: ${email}
+
+Campaign Strategy:
+- Objective: Secure a brief 10-minute discovery call.
+- Unique Value Proposition: Our AI acts as a 24/7 concierge that ensures no lead ever goes unanswered, increasing conversion rates by up to 40%.
+- Limited Offer: We are selecting 3 "Founding Partner" agencies in this region to receive a deeply discounted rate ($500 setup + $100/mo) in exchange for a testimonial.
+
+Tone Requirements:
+- Professional yet approachable and modern.
+- Avoid "salesy" clichés.
+- Focus on the *problem* (missed leads, late-night inquiries) and the *solution*.
+- The email should feel like it was written by a human who actually looked at their agency.
+
+Output Format:
+Return ONLY a JSON object with:
+- "subject": An intriguing, low-pressure subject line.
+- "body": The full email content.
+
+DO NOT include any other text or markdown markers.`;
 
     const result = await model.generateContent(prompt);
     const text = result.response.text();
