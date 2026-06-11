@@ -9,6 +9,9 @@ interface LeadInput {
   name: string;
   company: string;
   email: string;
+  phone?: string;
+  website?: string;
+  description?: string;
   status: string;
 }
 
@@ -22,13 +25,16 @@ export async function POST(req: NextRequest) {
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
 
     const prompt = `You are a real estate data scraper. I need 5 realistic real estate agencies or agents located in or near "${query}".
 Output the results in JSON format as an array of objects. Each object must have:
 - name: Full name of the agent or agency owner
 - company: Name of the real estate agency
 - email: A professional-looking email address
+- phone: A realistic business phone number
+- website: A realistic business website URL
+- description: A short (1-sentence) description of their specialization (e.g., "Luxury beachfront properties")
 - status: "new"
 
 Make sure the data looks authentic for the region "${query}".

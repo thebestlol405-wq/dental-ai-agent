@@ -39,7 +39,13 @@ export async function POST(req: Request) {
 
 export async function PATCH(req: Request) {
   try {
-    const { id, status } = await req.json();
+    const updates = await req.json();
+    const { id } = updates;
+
+    if (!id) {
+      return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+    }
+
     const fileContents = fs.readFileSync(leadsFilePath, 'utf8');
     const leads = JSON.parse(fileContents);
 
@@ -48,7 +54,7 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
     }
 
-    leads[leadIndex].status = status;
+    leads[leadIndex] = { ...leads[leadIndex], ...updates };
     fs.writeFileSync(leadsFilePath, JSON.stringify(leads, null, 2));
 
     return NextResponse.json(leads[leadIndex]);

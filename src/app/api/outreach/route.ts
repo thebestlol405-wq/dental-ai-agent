@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { sendEmail } from '@/lib/mail';
+import fs from 'fs';
+import path from 'path';
+
+const historyFilePath = path.join(process.cwd(), 'src/data/outreach_history.json');
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,7 +16,7 @@ export async function POST(req: NextRequest) {
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
 
     const prompt = `You are a business development representative for an automation agency.
 We build AI solutions for real estate agencies to help them handle leads and client questions 24/7.
@@ -53,6 +57,8 @@ Email: ${email}`;
     }
 
     // REAL EMAIL SEND
+    let status = 'sent';
+    let error = null;
     try {
       await sendEmail({
         to: email,
@@ -60,8 +66,37 @@ Email: ${email}`;
         text: emailData.body
       });
       console.log(`Email successfully sent to ${email}`);
-    } catch (mailError) {
+    } catch (mailError: any) {
       console.error('Nodemailer Error:', mailError);
+      status = 'failed';
+      error = mailError.message || 'SMTP_FAILURE';
+    }
+
+    // Log to history
+    try {
+      const historyEntry = {
+        id: Date.now().toString(),
+        timestamp: new Date().toISOString(),
+        to: email,
+        name,
+        company,
+        subject: emailData.subject,
+        body: emailData.body,
+        status,
+        error
+      };
+
+      let history = [];
+      if (fs.existsSync(historyFilePath)) {
+        history = JSON.parse(fs.readFileSync(historyFilePath, 'utf8'));
+      }
+      history.push(historyEntry);
+      fs.writeFileSync(historyFilePath, JSON.stringify(history, null, 2));
+    } catch (logError) {
+      console.error('Failed to log outreach history:', logError);
+    }
+
+    if (status === 'failed') {
       return NextResponse.json({
         success: true,
         message: 'Email generated but failed to send via SMTP. Please check your credentials.',
