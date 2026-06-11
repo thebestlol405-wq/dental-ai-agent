@@ -1,0 +1,10 @@
+[
+  {
+    "role": "user",
+    "content": "Hi"
+  },
+  {
+    "role": "assistant",
+    "content": "Hello! How can I help you with your real estate outreach today? I have your database of leads ready if you'd like to draft or send some emails."
+  }
+]

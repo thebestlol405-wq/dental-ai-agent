@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DoubleAgent: Real Estate Outreach Platform
 
-## Getting Started
+DoubleAgent is a powerful automation tool designed for real estate professionals and agencies to discover leads, generate AI-powered outreach, and manage communication history.
 
-First, run the development server:
+## 🚀 Key Features
 
+- **Agency Scraper:** Instantly find real estate agencies by city or region.
+- **AI Email Assistant:** Generate personalized, high-converting outreach emails using Google Gemini 1.5 Flash.
+- **Lead Management:** Organised CRM to track agency details, contact info, and outreach status.
+- **Bulk Outreach:** Send personalized messages to multiple leads at once.
+- **History Tracking:** Automatic logging of all outreach attempts for better follow-up.
+
+## 🛠 Tech Stack
+
+- **Framework:** [Next.js 15+](https://nextjs.org) (App Router)
+- **AI:** Google Generative AI (Gemini 1.5 Flash)
+- **Styling:** Tailwind CSS 4.0
+- **Icons:** Lucide React
+- **Email:** Nodemailer (SMTP ready)
+
+## 📦 Getting Started
+
+### 1. Clone the repository
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <your-repo-url>
+cd double-agent
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Install dependencies
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Configure Environment Variables
+Create a `.env.local` file in the root directory:
+```env
+# Google Gemini API Key for Scraper and Assistant
+GEMINI_API_KEY=your_gemini_api_key
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Email SMTP Configuration (for sending outreach)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=your-app-specific-password
+SMTP_FROM="Your Name <your-email@gmail.com>"
+```
 
-## Learn More
+### 4. Run the development server
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🚢 Deployment (Vercel)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Connect your repository to [Vercel](https://vercel.com).
+2. Add the environment variables listed above in the Vercel Project Settings.
+3. **Important Persistence Note:** This project currently uses local JSON files in `src/data/` for data persistence. On Vercel, the file system is ephemeral. For a production-ready setup, it is recommended to integrate a database such as:
+   - **Supabase** (PostgreSQL)
+   - **MongoDB**
+   - **Neon** (PostgreSQL)
 
-## Deploy on Vercel
+   To transition, update the API routes in `src/app/api/` to use your database client instead of `fs.promises`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📄 License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT

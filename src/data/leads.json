@@ -1,0 +1,352 @@
+[
+  {
+    "id": "1",
+    "name": "Myra Morales",
+    "company": "LAER Realty Partners",
+    "email": "myrateammorales@gmail.com",
+    "status": "new"
+  },
+  {
+    "id": "2",
+    "name": "Alex Adorno",
+    "company": "The Keyes Company",
+    "email": "AlexAdorno@keyes.com",
+    "status": "new"
+  },
+  {
+    "id": "3",
+    "name": "Erik Alvarez",
+    "company": "The Keyes Company",
+    "email": "ErikAlvarez@Keyes.com",
+    "status": "new"
+  },
+  {
+    "id": "4",
+    "name": "Tom Anton",
+    "company": "The Keyes Company",
+    "email": "AtoZ@keyes.com",
+    "status": "new"
+  },
+  {
+    "id": "5",
+    "name": "Catherine Barbre",
+    "company": "The Keyes Company",
+    "email": "cathybarbre@keyes.com",
+    "status": "new"
+  },
+  {
+    "id": "6",
+    "name": "Hamid Hakimi",
+    "company": "Port St Lucie Real Estate",
+    "email": "info@portstlucie.city",
+    "status": "new"
+  },
+  {
+    "id": "7",
+    "name": "Julio Sanchez",
+    "company": "Coldwell Banker Paradise",
+    "email": "julio.sanchez@cbparadise.com",
+    "status": "new"
+  },
+  {
+    "id": "8",
+    "name": "Marlene Reyes",
+    "company": "Coldwell Banker Paradise",
+    "email": "marlene.reyes@cbparadise.com",
+    "status": "new"
+  },
+  {
+    "id": "9",
+    "name": "Karen Pfalz",
+    "company": "Coldwell Banker Paradise",
+    "email": "karen.pfalz@cbparadise.com",
+    "status": "new"
+  },
+  {
+    "id": "10",
+    "name": "Nathan Berlin",
+    "company": "RE/MAX Masterpiece Realty",
+    "email": "nberlin@remaxmasterpiecerealty.com",
+    "status": "new"
+  },
+  {
+    "id": "11",
+    "name": "Sal Saleski",
+    "company": "Berkshire Hathaway CNY Realty",
+    "email": "ssaleski@twcny.rr.com",
+    "status": "new"
+  },
+  {
+    "id": "12",
+    "name": "Noelle Salmonsen",
+    "company": "Freedom Real Estate",
+    "email": "noellesoldit@earthlink.net",
+    "status": "new"
+  },
+  {
+    "id": "13",
+    "name": "Mandy Saloski",
+    "company": "Inquire Realty",
+    "email": "msaloski@gmail.com",
+    "status": "new"
+  },
+  {
+    "id": "14",
+    "name": "Tanmay Kelkar",
+    "company": "Tanmay Kelkar Real Estate",
+    "email": "tanmayrealtor@gmail.com",
+    "status": "new"
+  },
+  {
+    "id": "15",
+    "name": "Krishna Bhure",
+    "company": "Real Estate Broker",
+    "email": "Connect@kbreg.com",
+    "status": "new"
+  },
+  {
+    "id": "16",
+    "name": "Omkar Mhatre",
+    "company": "Omkar Mhatre Realtor",
+    "email": "omkarealty@gmail.com",
+    "status": "new"
+  },
+  {
+    "id": "17",
+    "name": "Miami Association of REALTORS",
+    "company": "Miami Association",
+    "email": "info@miamire.com",
+    "status": "new"
+  },
+  {
+    "id": "18",
+    "name": "Broker Support",
+    "company": "MIAMI REALTORS",
+    "email": "brokers@miamire.com",
+    "status": "new"
+  },
+  {
+    "id": "19",
+    "name": "Properties Miami",
+    "company": "Properties Miami Agency",
+    "email": "info@propertiesmiami.com",
+    "status": "new"
+  },
+  {
+    "id": "20",
+    "name": "Miami Global Realty",
+    "company": "Miami Global Realty",
+    "email": "info@miamiglobalrealty.com",
+    "status": "new"
+  },
+  {
+    "name": "Elena Vasquez",
+    "company": "Coastal Miami Realty",
+    "email": "elena@coastalmiamirealty.com",
+    "phone": "+1 (305) 555-0143",
+    "website": "https://www.coastalmiamirealty.com",
+    "description": "Specializing in high-end luxury condominiums in Brickell and Key Biscayne.",
+    "status": "new",
+    "id": "1781204004965"
+  },
+  {
+    "name": "Mateo Silva",
+    "company": "Apex South Beach Properties",
+    "email": "msilva@apexsouthbeach.com",
+    "phone": "+1 (305) 555-0188",
+    "website": "https://www.apexsouthbeach.com",
+    "description": "Dedicated to finding exclusive beachfront estates and penthouses in Miami Beach.",
+    "status": "new",
+    "id": "1781204004966"
+  },
+  {
+    "name": "Sarah Jenkins",
+    "company": "Coral Gables Living Group",
+    "email": "sarah@coralgablesliving.com",
+    "phone": "+1 (786) 555-0112",
+    "website": "https://www.coralgablesliving.com",
+    "description": "Expert in historic single-family homes and luxury estates in Coral Gables and Coconut Grove.",
+    "status": "new",
+    "id": "1781204004967"
+  },
+  {
+    "name": "Alejandro Mendez",
+    "company": "Miami Metro Real Estate",
+    "email": "a.mendez@miamimetrore.com",
+    "phone": "+1 (305) 555-0195",
+    "website": "https://www.miamimetrore.com",
+    "description": "Focuses on commercial real estate and pre-construction investment opportunities across Downtown Miami.",
+    "status": "new",
+    "id": "1781204004968"
+  },
+  {
+    "name": "Isabella Rossi",
+    "company": "Biscayne Bay Realty",
+    "email": "i.rossi@biscaynebayrealty.com",
+    "phone": "+1 (786) 555-0167",
+    "website": "https://www.biscaynebayrealty.com",
+    "description": "Specializes in waterfront residential properties and private dock homes along Biscayne Bay.",
+    "status": "new",
+    "id": "1781204004970"
+  },
+  {
+    "name": "Alejandro Salazar",
+    "company": "One Sotheby's International Realty",
+    "email": "asalazar@onesothebysrealty.com",
+    "phone": "(305) 555-0143",
+    "website": "https://www.salazarluxurygroup.com",
+    "description": "Specializes in ultra-luxury waterfront estates and high-end pre-construction condos in Miami Beach and Key Biscayne, managing over $150M in lifetime sales.",
+    "status": "new",
+    "id": "1781206748859"
+  },
+  {
+    "name": "Elena Rostova",
+    "company": "Apex Commercial Group Miami",
+    "email": "erostova@apexcommercialmiami.com",
+    "phone": "(305) 555-0188",
+    "website": "https://www.apexcommercialmiami.com",
+    "description": "A seasoned commercial broker focusing on multi-family acquisitions and retail leasing in the Brickell Financial District and Wynwood.",
+    "status": "new",
+    "id": "1781206748860"
+  },
+  {
+    "name": "Marcus Vance",
+    "company": "Compass Miami",
+    "email": "marcus.vance@compass.com",
+    "phone": "(305) 555-0122",
+    "website": "https://www.compass.com/agents/marcus-vance",
+    "description": "Prominent residential agent specializing in historic single-family homes and luxury estates in Coral Gables and Coconut Grove, catering heavily to corporate relocations.",
+    "status": "new",
+    "id": "1781206748861"
+  },
+  {
+    "name": "Sofia Mendes",
+    "company": "Douglas Elliman Florida",
+    "email": "sofia.mendes@elliman.com",
+    "phone": "(786) 555-0195",
+    "website": "https://www.elliman.com/florida/associate/sofia-mendes",
+    "description": "Focuses exclusively on oceanfront penthouses and luxury towers in Sunny Isles Beach and Bal Harbour, serving elite international investors.",
+    "status": "new",
+    "id": "1781206748862"
+  },
+  {
+    "name": "Mateo Silva",
+    "company": "Cervera Real Estate",
+    "email": "msilva@cervera.com",
+    "phone": "(305) 555-0171",
+    "website": "https://www.cervera.com/agents/mateo-silva",
+    "description": "Expert in new construction sales and gated community homes in Doral, representing top developers and assisting first-time luxury buyers.",
+    "status": "new",
+    "id": "1781206748863"
+  },
+  {
+    "name": "Christian Dupont",
+    "company": "Dupont Commercial Advisory",
+    "email": "cdupont@dupontcommercial.com",
+    "phone": "(786) 555-0164",
+    "website": "https://www.dupontcommercial.com",
+    "description": "Specializes in industrial warehousing, logistics facilities, and commercial land sales near the Miami International Airport and Medley areas.",
+    "status": "new",
+    "id": "1781206748864"
+  },
+  {
+    "name": "Sarah Jenkins",
+    "company": "Coldwell Banker Realty - Miami",
+    "email": "sarah.jenkins@coldwellbanker.com",
+    "phone": "(305) 555-0119",
+    "website": "https://www.coldwellbankerhomes.com/fl/miami/agent/sarah-jenkins",
+    "description": "Award-winning Pinecrest specialist focused on sprawling acreage estates, top-tier school districts, and luxury suburban living for growing families.",
+    "status": "new",
+    "id": "1781206748865"
+  },
+  {
+    "name": "Julian Alvarez",
+    "company": "Luxe Living Realty",
+    "email": "julian@luxelivingmiami.com",
+    "phone": "(786) 555-0152",
+    "website": "https://www.luxelivingmiami.com/team/julian-alvarez",
+    "description": "Focuses on residential investment portfolios, luxury high-rises, and emerging multi-family opportunities in Edgewater and Midtown Miami.",
+    "status": "new",
+    "id": "1781206748866"
+  },
+  {
+    "name": "Richard Silver",
+    "company": "Sotheby's International Realty Canada",
+    "email": "rsilver@sothebysrealty.ca",
+    "phone": "+1 416-960-9995",
+    "website": "https://sothebysrealty.ca",
+    "description": "A seasoned veteran specializing in Toronto's high-end luxury residential market, focusing on prime neighborhoods like Forest Hill, Rosedale, and Lawrence Park.",
+    "status": "new",
+    "id": "1781207245326"
+  },
+  {
+    "name": "Marcus Gagliardi",
+    "company": "Colliers International Canada",
+    "email": "marcus.gagliardi@colliers.com",
+    "phone": "+1 416-777-2200",
+    "website": "https://www.collierscanada.com",
+    "description": "Specializes in commercial investment sales and retail leasing acquisitions across the Greater Toronto Area (GTA).",
+    "status": "new",
+    "id": "1781207245327"
+  },
+  {
+    "name": "Christopher Bibby",
+    "company": "RE/MAX Hallmark Bibby Group Realty",
+    "email": "christopher@bibbygroup.com",
+    "phone": "+1 416-486-5588",
+    "website": "https://bibbygroup.com",
+    "description": "Renowned for representing some of Toronto's most exclusive loft spaces and luxury modern condominium developments in the downtown core.",
+    "status": "new",
+    "id": "1781207245328"
+  },
+  {
+    "name": "Barry Cohen",
+    "company": "RE/MAX Realtron Barry Cohen Homes",
+    "email": "barry@barrycohenhomes.com",
+    "phone": "+1 416-224-1800",
+    "website": "https://barrycohenhomes.com",
+    "description": "Recognized as one of Canada's top-producing residential agents, specializing in multi-million dollar estates in Toronto's Bridle Path and surrounding luxury enclaves.",
+    "status": "new",
+    "id": "1781207245329"
+  },
+  {
+    "name": "Davelle Morrison",
+    "company": "Bosley Real Estate Ltd.",
+    "email": "dmorrison@bosleyrealestate.com",
+    "phone": "+1 416-481-6137",
+    "website": "https://morrisonsellsrealestate.com",
+    "description": "An award-winning broker and investor focusing on residential sales, multi-family investments, and assisting first-time buyers in Toronto's trendy West End.",
+    "status": "new",
+    "id": "1781207245330"
+  },
+  {
+    "name": "Goran Brelih",
+    "company": "Cushman & Wakefield ULC",
+    "email": "goran.brelih@cushwake.com",
+    "phone": "+1 416-756-5404",
+    "website": "https://cushmanwakefield.com",
+    "description": "Senior Vice President specializing in industrial sales, leasing, and land development projects across the Greater Toronto Area.",
+    "status": "new",
+    "id": "1781207245331"
+  },
+  {
+    "name": "Helen Tang",
+    "company": "Real One Realty",
+    "email": "htang@realonerealty.com",
+    "phone": "+1 905-474-0555",
+    "website": "http://www.realonerealty.com",
+    "description": "Expert residential broker serving Markham and Richmond Hill, specializing in luxury single-family homes and elite school district properties.",
+    "status": "new",
+    "id": "1781207245332"
+  },
+  {
+    "name": "Ara Mamourian",
+    "company": "The Spring Team (Keller Williams Referred Urban Realty)",
+    "email": "ara@thespringteam.ca",
+    "phone": "+1 416-465-7850",
+    "website": "https://thespringteam.ca",
+    "description": "Modern boutique team leader focusing on urban loft conversions, residential sales, and neighborhood revitalization projects in Toronto's vibrant East End.",
+    "status": "new",
+    "id": "1781207245333"
+  }
+]
