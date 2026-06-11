@@ -1,0 +1,13 @@
+[
+  {
+    "id": "1781204261008",
+    "timestamp": "2026-06-11T18:57:41.008Z",
+    "to": "jules.test@example.com",
+    "name": "John Doe",
+    "company": "JD Realty",
+    "subject": "Never miss a JD Realty lead?",
+    "body": "Hi John,\n\nQuick question: how many JD Realty leads are slipping through the cracks after hours?\n\nWe build simple AI assistants that answer client questions and qualify leads 24/7, so you never miss a deal.\n\nWe’re currently looking for one \"Founding Agency\" to partner with at a special rate of $500 setup + $100/mo.\n\nGot 10 minutes this week for a quick demo?\n\nBest,\n\n[Your Name]",
+    "status": "sent",
+    "error": null
+  }
+]

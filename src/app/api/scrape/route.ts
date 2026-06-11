@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
 
     const prompt = `You are a real estate data scraper. I need 5 realistic real estate agencies or agents located in or near "${query}".
 Output the results in JSON format as an array of objects. Each object must have:
@@ -78,8 +78,11 @@ ONLY return the JSON array, no other text.`;
       message: `Found and added ${leadsWithIds.length} agencies in ${query}`,
       leads: leadsWithIds
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Scraper API Error:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({
+      error: error.message || 'Internal Server Error',
+      details: error.stack
+    }, { status: 500 });
   }
 }

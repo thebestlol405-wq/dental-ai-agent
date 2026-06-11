@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
 
     const prompt = `You are a business development representative for an automation agency.
 We build AI solutions for real estate agencies to help them handle leads and client questions 24/7.
@@ -112,8 +112,11 @@ Email: ${email}`;
       subject: emailData.subject,
       content: emailData.body
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Outreach API Error:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({
+      error: error.message || 'Internal Server Error',
+      details: error.stack
+    }, { status: 500 });
   }
 }

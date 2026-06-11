@@ -138,5 +138,55 @@
     "company": "Miami Global Realty",
     "email": "info@miamiglobalrealty.com",
     "status": "new"
+  },
+  {
+    "name": "Elena Vasquez",
+    "company": "Coastal Miami Realty",
+    "email": "elena@coastalmiamirealty.com",
+    "phone": "+1 (305) 555-0143",
+    "website": "https://www.coastalmiamirealty.com",
+    "description": "Specializing in high-end luxury condominiums in Brickell and Key Biscayne.",
+    "status": "new",
+    "id": "1781204004965"
+  },
+  {
+    "name": "Mateo Silva",
+    "company": "Apex South Beach Properties",
+    "email": "msilva@apexsouthbeach.com",
+    "phone": "+1 (305) 555-0188",
+    "website": "https://www.apexsouthbeach.com",
+    "description": "Dedicated to finding exclusive beachfront estates and penthouses in Miami Beach.",
+    "status": "new",
+    "id": "1781204004966"
+  },
+  {
+    "name": "Sarah Jenkins",
+    "company": "Coral Gables Living Group",
+    "email": "sarah@coralgablesliving.com",
+    "phone": "+1 (786) 555-0112",
+    "website": "https://www.coralgablesliving.com",
+    "description": "Expert in historic single-family homes and luxury estates in Coral Gables and Coconut Grove.",
+    "status": "new",
+    "id": "1781204004967"
+  },
+  {
+    "name": "Alejandro Mendez",
+    "company": "Miami Metro Real Estate",
+    "email": "a.mendez@miamimetrore.com",
+    "phone": "+1 (305) 555-0195",
+    "website": "https://www.miamimetrore.com",
+    "description": "Focuses on commercial real estate and pre-construction investment opportunities across Downtown Miami.",
+    "status": "new",
+    "id": "1781204004968"
+  },
+  {
+    "name": "Isabella Rossi",
+    "company": "Biscayne Bay Realty",
+    "email": "i.rossi@biscaynebayrealty.com",
+    "phone": "+1 (786) 555-0167",
+    "website": "https://www.biscaynebayrealty.com",
+    "description": "Specializes in waterfront residential properties and private dock homes along Biscayne Bay.",
+    "status": "new",
+    "id": "1781204004970"
   }
 ]

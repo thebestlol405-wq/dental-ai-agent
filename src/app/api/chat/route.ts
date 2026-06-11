@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash-latest",
+      model: "gemini-3.5-flash",
       systemInstruction: `You are a personal outreach assistant for Real Estate.
 Current Leads in Database:
 ${leadsContext}
@@ -83,8 +83,11 @@ RULES:
     fs.writeFileSync(chatHistoryPath, JSON.stringify(history, null, 2));
 
     return NextResponse.json({ message: finalReply });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Chat API Error:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({
+      error: error.message || 'Internal Server Error',
+      details: error.stack
+    }, { status: 500 });
   }
 }
