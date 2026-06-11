@@ -57,3 +57,31 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: 'Failed to update lead' }, { status: 500 });
   }
 }
+
+export async function DELETE(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+    }
+
+    const fileContents = fs.readFileSync(leadsFilePath, 'utf8');
+    let leads = JSON.parse(fileContents);
+
+    const initialLength = leads.length;
+    leads = leads.filter((l: { id: string }) => l.id !== id);
+
+    if (leads.length === initialLength) {
+      return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
+    }
+
+    fs.writeFileSync(leadsFilePath, JSON.stringify(leads, null, 2));
+
+    return NextResponse.json({ success: true, message: 'Lead deleted' });
+  } catch (error) {
+    console.error('Error deleting lead:', error);
+    return NextResponse.json({ error: 'Failed to delete lead' }, { status: 500 });
+  }
+}

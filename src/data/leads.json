@@ -110,5 +110,33 @@
     "company": "Omkar Mhatre Realtor",
     "email": "omkarealty@gmail.com",
     "status": "new"
+  },
+  {
+    "id": "17",
+    "name": "Miami Association of REALTORS",
+    "company": "Miami Association",
+    "email": "info@miamire.com",
+    "status": "new"
+  },
+  {
+    "id": "18",
+    "name": "Broker Support",
+    "company": "MIAMI REALTORS",
+    "email": "brokers@miamire.com",
+    "status": "new"
+  },
+  {
+    "id": "19",
+    "name": "Properties Miami",
+    "company": "Properties Miami Agency",
+    "email": "info@propertiesmiami.com",
+    "status": "new"
+  },
+  {
+    "id": "20",
+    "name": "Miami Global Realty",
+    "company": "Miami Global Realty",
+    "email": "info@miamiglobalrealty.com",
+    "status": "new"
   }
 ]

@@ -11,6 +11,10 @@ import {
   Mail,
   Building2,
   Loader2,
+  Trash2,
+  CheckCircle2,
+  AlertCircle,
+  MoreVertical
 } from 'lucide-react';
 
 interface Lead {
@@ -24,10 +28,12 @@ interface Lead {
 export default function Dashboard() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [isSending, setIsSending] = useState<string | null>(null);
+  const [isBulkSending, setIsBulkSending] = useState(false);
   const [lastSentContent, setLastSentContent] = useState<{ subject: string, body: string, email: string } | null>(null);
   const [activeTab, setActiveTab] = useState<'scraper' | 'assistant' | 'leads'>('scraper');
   const [searchQuery, setSearchQuery] = useState('');
   const [isScraping, setIsScraping] = useState(false);
+  const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null);
 
   // Assistant State
   const [messages, setMessages] = useState<{ role: 'user' | 'assistant', content: string }[]>([]);
@@ -38,12 +44,10 @@ export default function Dashboard() {
   useEffect(() => {
     const initData = async () => {
       try {
-        // Fetch leads
         const leadsRes = await fetch('/api/leads');
         const leadsData = await leadsRes.json();
         setLeads(leadsData);
 
-        // Fetch chat history
         const chatRes = await fetch('/api/chat');
         const chatData = await chatRes.json();
         if (chatData && chatData.length > 0) {
@@ -59,6 +63,13 @@ export default function Dashboard() {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+    if (notification) {
+      const timer = setTimeout(() => setNotification(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [notification]);
 
   const refreshLeads = async () => {
     try {
@@ -85,9 +96,11 @@ export default function Dashboard() {
       if (data.leads) {
         await refreshLeads();
         setActiveTab('leads');
+        setNotification({ type: 'success', message: `Found ${data.leads.length} new leads!` });
       }
     } catch (error) {
       console.error('Scraping failed:', error);
+      setNotification({ type: 'error', message: 'Scraping failed' });
     } finally {
       setIsScraping(false);
     }
@@ -97,7 +110,6 @@ export default function Dashboard() {
     e.preventDefault();
     if (!assistantInput.trim() || isAssistantLoading) return;
 
-    // Mobile: hide keyboard on submit
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
@@ -127,7 +139,6 @@ export default function Dashboard() {
 
   const handleSendEmail = async (lead: Lead) => {
     setIsSending(lead.id);
-    setLastSentContent(null);
     try {
       const response = await fetch('/api/outreach', {
         method: 'POST',
@@ -153,6 +164,9 @@ export default function Dashboard() {
           body: JSON.stringify({ id: lead.id, status: 'contacted' }),
         });
         await refreshLeads();
+        setNotification({ type: 'success', message: `Email sent to ${lead.name}` });
+      } else {
+        setNotification({ type: 'error', message: `Failed to send to ${lead.name}` });
       }
     } catch (error) {
       console.error('Failed to send outreach:', error);
@@ -161,15 +175,83 @@ export default function Dashboard() {
     }
   };
 
+  const handleBulkSend = async () => {
+    const newLeads = leads.filter(l => l.status === 'new');
+    if (newLeads.length === 0) {
+      setNotification({ type: 'error', message: 'No new leads to send to' });
+      return;
+    }
+
+    if (!confirm(`Send automated emails to ${newLeads.length} leads?`)) return;
+
+    setIsBulkSending(true);
+    let successCount = 0;
+
+    for (const lead of newLeads) {
+      try {
+        const response = await fetch('/api/outreach', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            leadId: lead.id,
+            name: lead.name,
+            company: lead.company,
+            email: lead.email
+          }),
+        });
+        const data = await response.json();
+
+        if (data.success) {
+          await fetch('/api/leads', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: lead.id, status: 'contacted' }),
+          });
+          successCount++;
+        }
+      } catch (err) {
+        console.error(`Bulk send error for ${lead.email}:`, err);
+      }
+    }
+
+    await refreshLeads();
+    setIsBulkSending(false);
+    setNotification({ type: 'success', message: `Bulk send complete: ${successCount}/${newLeads.length} successful` });
+  };
+
+  const handleDeleteLead = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this lead?')) return;
+
+    try {
+      const response = await fetch(`/api/leads?id=${id}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        await refreshLeads();
+        setNotification({ type: 'success', message: 'Lead deleted' });
+      }
+    } catch (error) {
+      console.error('Failed to delete lead:', error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row h-screen overflow-hidden">
-      {/* Sidebar */}
+      {notification && (
+        <div className={`fixed top-4 right-4 z-50 flex items-center gap-3 px-6 py-4 rounded-2xl shadow-2xl animate-in slide-in-from-top-4 duration-300 ${
+          notification.type === 'success' ? 'bg-emerald-500 text-white' : 'bg-rose-500 text-white'
+        }`}>
+          {notification.type === 'success' ? <CheckCircle2 className="h-5 w-5" /> : <AlertCircle className="h-5 w-5" />}
+          <p className="font-bold">{notification.message}</p>
+        </div>
+      )}
+
       <aside className="w-full md:w-64 bg-slate-900 text-white p-4 md:p-6 flex flex-col gap-4 md:gap-8 border-b md:border-r border-slate-800 shrink-0">
         <div className="flex items-center gap-3">
           <div className="bg-blue-600 p-2 rounded-lg">
             <ShieldCheck className="text-white h-6 w-6" />
           </div>
-          <span className="text-xl font-bold tracking-tight">DoubleAgent</span>
+          <span className="text-xl font-bold tracking-tight text-white">DoubleAgent</span>
         </div>
 
         <nav className="flex flex-row md:flex-col gap-2 overflow-x-auto no-scrollbar pb-2 md:pb-0">
@@ -195,25 +277,25 @@ export default function Dashboard() {
             Leads
           </button>
         </nav>
-
-        <div className="mt-auto bg-slate-800 p-4 rounded-2xl hidden md:block">
-          <p className="text-xs text-slate-400 uppercase font-bold mb-2">Credits</p>
-          <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
-            <div className="h-full bg-blue-500 w-3/4" />
-          </div>
-          <p className="text-xs mt-2 font-medium">750 / 1000 searches</p>
-        </div>
       </aside>
 
-      {/* Main Content */}
       <main className="flex-1 overflow-y-auto h-full flex flex-col">
         <header className="bg-white border-b px-4 md:px-8 py-4 md:py-6 flex justify-between items-center sticky top-0 z-10 shrink-0">
           <div>
             <h1 className="text-xl md:text-2xl font-bold text-slate-900">
               {activeTab === 'scraper' ? 'Agency Scraper' : activeTab === 'assistant' ? 'Email Assistant' : 'Real Estate Leads'}
             </h1>
-            <p className="text-slate-500 text-xs md:text-sm">Targeting: USA & Canada</p>
           </div>
+          {activeTab === 'leads' && (
+            <button
+              onClick={handleBulkSend}
+              disabled={isBulkSending || leads.filter(l => l.status === 'new').length === 0}
+              className="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 hover:bg-blue-700 transition disabled:opacity-50"
+            >
+              {isBulkSending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Zap className="h-3 w-3" />}
+              Bulk Send ({leads.filter(l => l.status === 'new').length})
+            </button>
+          )}
         </header>
 
         <div className="p-4 md:p-8 flex-1">
@@ -229,7 +311,7 @@ export default function Dashboard() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="e.g. Miami, FL or Toronto, ON"
-                  className="flex-1 px-5 md:px-6 py-3 md:py-4 rounded-2xl border-2 border-slate-200 focus:border-blue-600 outline-none transition text-sm md:text-base"
+                  className="flex-1 px-5 md:px-6 py-3 md:py-4 rounded-2xl border-2 border-slate-200 focus:border-blue-600 outline-none transition text-sm md:text-base text-slate-900 shadow-sm"
                 />
                 <button
                   disabled={isScraping || !searchQuery.trim()}
@@ -263,8 +345,8 @@ export default function Dashboard() {
                 )}
                 {messages.map((msg, i) => (
                   <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[80%] px-6 py-3 rounded-2xl ${
-                      msg.role === 'user' ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white border shadow-sm rounded-tl-none'
+                    <div className={`max-w-[85%] px-6 py-3 rounded-2xl ${
+                      msg.role === 'user' ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-white border shadow-sm rounded-tl-none text-slate-900'
                     }`}>
                       <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
                     </div>
@@ -286,7 +368,7 @@ export default function Dashboard() {
                   value={assistantInput}
                   onChange={(e) => setAssistantInput(e.target.value)}
                   placeholder="Ask me to write an email..."
-                  className="flex-1 px-4 py-3 rounded-xl bg-slate-100 focus:bg-white border-none focus:ring-2 focus:ring-blue-600 transition outline-none"
+                  className="flex-1 px-4 py-3 rounded-xl bg-slate-100 focus:bg-white border-none focus:ring-2 focus:ring-blue-600 transition outline-none text-slate-900"
                 />
                 <button
                   disabled={isAssistantLoading || !assistantInput.trim()}
@@ -299,77 +381,71 @@ export default function Dashboard() {
           )}
 
           {activeTab === 'leads' && (
-            <div className="flex flex-col gap-6 h-full">
-              <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-x-auto">
-                <table className="w-full text-left min-w-[600px]">
-                  <thead className="bg-slate-50 border-b text-xs font-bold text-slate-500 uppercase tracking-wider">
-                    <tr>
-                      <th className="px-4 md:px-6 py-3 md:py-4">Agent / Company</th>
-                      <th className="px-4 md:px-6 py-3 md:py-4">Status</th>
-                      <th className="px-4 md:px-6 py-3 md:py-4">Contact</th>
-                      <th className="px-4 md:px-6 py-3 md:py-4 text-right">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y">
-                    {leads.map((lead) => (
-                      <tr key={lead.id} className="hover:bg-slate-50/50 transition">
-                        <td className="px-4 md:px-6 py-3 md:py-4">
-                          <div className="font-bold text-slate-900 text-sm">{lead.name}</div>
-                          <div className="text-[10px] md:text-xs text-slate-500 flex items-center gap-1">
-                            <Building2 className="h-3 w-3" />
-                            {lead.company}
-                          </div>
-                        </td>
-                        <td className="px-4 md:px-6 py-3 md:py-4">
-                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                            lead.status === 'new' ? 'bg-blue-50 text-blue-700' : 'bg-amber-50 text-amber-700'
-                          }`}>
-                            {lead.status}
-                          </span>
-                        </td>
-                        <td className="px-4 md:px-6 py-3 md:py-4 text-xs md:text-sm text-slate-600">{lead.email}</td>
-                        <td className="px-4 md:px-6 py-3 md:py-4 text-right">
-                          <button
-                            onClick={() => handleSendEmail(lead)}
-                            disabled={isSending === lead.id || lead.status === 'contacted'}
-                            className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 disabled:opacity-50"
-                          >
-                            {isSending === lead.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+            <div className="flex flex-col gap-6 h-full pb-20">
+              <div className="grid grid-cols-1 gap-4">
+                {leads.map((lead) => (
+                  <div key={lead.id} className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col gap-3">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-bold text-slate-900">{lead.name}</h3>
+                        <p className="text-xs text-slate-500 flex items-center gap-1">
+                          <Building2 className="h-3 w-3" /> {lead.company}
+                        </p>
+                      </div>
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                        lead.status === 'new' ? 'bg-blue-50 text-blue-700' : 'bg-emerald-50 text-emerald-700'
+                      }`}>
+                        {lead.status}
+                      </span>
+                    </div>
+
+                    <div className="text-sm text-slate-600 bg-slate-50 p-2 rounded-lg break-all">
+                      {lead.email}
+                    </div>
+
+                    <div className="flex gap-2 mt-1">
+                      <button
+                        onClick={() => handleSendEmail(lead)}
+                        disabled={isSending === lead.id || lead.status === 'contacted'}
+                        className="flex-1 bg-blue-600 text-white py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-2 hover:bg-blue-700 disabled:opacity-50"
+                      >
+                        {isSending === lead.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Send className="h-3 w-3" />}
+                        Send Outreach
+                      </button>
+                      <button
+                        onClick={() => handleDeleteLead(lead.id)}
+                        className="p-2 bg-rose-50 text-rose-600 rounded-xl hover:bg-rose-100"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
 
-              <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-4 md:p-6 shrink-0">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="font-bold text-sm md:text-base">Generated Outreach</h3>
-                  {lastSentContent && (
+              {lastSentContent && (
+                <div className="fixed bottom-0 left-0 right-0 md:relative bg-white border-t md:border border-slate-200 md:rounded-3xl shadow-2xl md:shadow-sm p-4 md:p-6 z-20">
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="font-bold text-sm text-slate-900">Recent Outreach Preview</h3>
                     <a
                       href={`mailto:${lastSentContent.email}?subject=${encodeURIComponent(lastSentContent.subject)}&body=${encodeURIComponent(lastSentContent.body)}`}
-                      className="bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 hover:bg-blue-700 transition"
+                      className="bg-slate-900 text-white px-4 py-2 rounded-lg text-[10px] font-bold flex items-center gap-2"
                     >
                       <Mail className="h-3 w-3" />
-                      Open in Email Client
+                      Open Client
                     </a>
-                  )}
-                </div>
-                {lastSentContent ? (
-                  <div className="bg-slate-50 p-4 rounded-xl text-sm border">
-                    <div className="mb-2 pb-2 border-b border-slate-200">
-                      <span className="font-bold text-slate-500 uppercase text-[10px]">Subject:</span>
+                  </div>
+                  <div className="bg-slate-50 p-3 rounded-xl text-xs border max-h-40 overflow-y-auto">
+                    <div className="mb-1">
+                      <span className="font-bold text-slate-400 uppercase text-[9px]">Subject:</span>
                       <div className="text-slate-900 font-medium">{lastSentContent.subject}</div>
                     </div>
-                    <div className="whitespace-pre-wrap text-slate-700">
+                    <div className="whitespace-pre-wrap text-slate-700 mt-2 pt-2 border-t border-slate-200">
                       {lastSentContent.body}
                     </div>
                   </div>
-                ) : (
-                  <p className="text-slate-400 text-sm italic">Send an email to preview content here.</p>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           )}
         </div>
