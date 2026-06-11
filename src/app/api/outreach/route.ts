@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { getWorkingModel } from '@/lib/gemini';
 import { sendEmail } from '@/lib/mail';
 import fs from 'fs';
 import path from 'path';
@@ -15,8 +16,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Gemini API Key not found' }, { status: 500 });
     }
 
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
+    const model = await getWorkingModel(apiKey);
 
     const prompt = `You are an expert sales strategist specialized in real estate technology.
 We are offering a cutting-edge AI assistant for real estate agencies that handles 24/7 lead qualification, appointment booking, and property inquiries.

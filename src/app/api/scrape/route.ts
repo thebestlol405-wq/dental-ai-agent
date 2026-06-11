@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { getWorkingModel } from '@/lib/gemini';
 import fs from 'fs';
 import path from 'path';
 
@@ -24,8 +25,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Gemini API Key not found' }, { status: 500 });
     }
 
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
+    const model = await getWorkingModel(apiKey);
 
     const prompt = `You are a professional real estate lead researcher. I need 8 high-quality, realistic leads for real estate agencies or top-performing agents located in or near "${query}".
 

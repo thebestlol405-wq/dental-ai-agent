@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { getWorkingModel } from '@/lib/gemini';
 import fs from 'fs';
 import path from 'path';
 import { sendEmail } from '@/lib/mail';
@@ -29,9 +30,7 @@ export async function POST(req: NextRequest) {
     const leads = JSON.parse(fs.readFileSync(leadsFilePath, 'utf8'));
     const leadsContext = leads.map((l: { name: string; company: string; email: string }) => `${l.name} (${l.company}) - ${l.email}`).join('\n');
 
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({
-      model: "gemini-3.5-flash",
+    const model = await getWorkingModel(apiKey, {
       systemInstruction: `You are a personal outreach assistant for Real Estate.
 Current Leads in Database:
 ${leadsContext}

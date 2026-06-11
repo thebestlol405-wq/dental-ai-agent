@@ -449,6 +449,7 @@ export default function Dashboard() {
         <div className="mt-auto pt-4 border-t border-slate-800 hidden md:block">
           <Link
             href="/"
+            prefetch={false}
             className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition font-medium"
           >
             <Home className="h-5 w-5" />
